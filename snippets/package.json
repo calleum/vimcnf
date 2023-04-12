@@ -1,0 +1,14 @@
+{
+  "name": "calsnip",
+  "contributes": {
+    "snippets": [
+      {
+        "language": [
+          "all"
+          ],
+        "path": "./snippets.json"
+      }
+    ]
+  }
+}
+
