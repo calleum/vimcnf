@@ -14,11 +14,9 @@ function ensure(user, repo)
 end
 
 ensure("wbthomason", "packer.nvim")
-
--- Aniseed compiles our Fennel code to Lua and loads it automatically.
 ensure("Olical", "aniseed")
-
--- Enable Aniseed's automatic compilation and loading of Fennel source code.
+ensure("lewis6991", "impatient.nvim")
+require("impatient")
 vim.g["aniseed#env"] = { module = "cal.init" }
 
 -- require 'calleum'

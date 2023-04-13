@@ -6,7 +6,8 @@
     (material.setup
       {:custom_highlights {:FloatBorder {:fg "#1A1A1A"}}
        :borders true
-       :high_visibility {:darker true}})
+       :high_visibility {:darker true}
+       :custom_colors (fn [colors] (set colors.syntax.string "#C792EA")) })
 
     (set nvim.g.material_style :darker)
     (nvim.ex.colorscheme :material)))

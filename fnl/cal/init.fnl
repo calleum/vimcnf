@@ -44,10 +44,14 @@
   :Olical/nvim-local-fennel {}
   :PaterJason/cmp-conjure {}
   :PeterRincker/vim-argumentative {}
+  :simrat39/rust-tools.nvim {:mod :rust}
   :airblade/vim-gitgutter {}
   :clojure-vim/clojure.vim {}
   :clojure-vim/vim-jack-in {}
   :folke/which-key.nvim {:mod :which-key}
+  :danymat/neogen {}
+  :lervag/vimtex {}
+  :wlangstroth/vim-racket {}
   :ggandor/lightspeed.nvim {}
   :guns/vim-sexp {:mod :sexp}
   :hrsh7th/cmp-buffer {}
@@ -55,6 +59,7 @@
   :hrsh7th/cmp-nvim-lsp {}
   :hrsh7th/cmp-path {}
   :hrsh7th/nvim-cmp {:mod :cmp}
+  :L3MON4D3/LuaSnip {:requires [[:saadparwaiz1/cmp_luasnip] [:rafamadriz/friendly-snippets]]}
   :jiangmiao/auto-pairs {:mod :auto-pairs}
   :lewis6991/impatient.nvim {}
   :marko-cerovac/material.nvim {:mod :material}
@@ -74,5 +79,7 @@
   :tpope/vim-surround {}
   :tpope/vim-unimpaired {}
   :tpope/vim-vinegar {}
+  :nvim-treesitter/playground {}
+  :nvim-treesitter/nvim-treesitter {:run ":TSUpdate" :mod :treesitter}
   :wbthomason/packer.nvim {}
   )
