@@ -23,5 +23,18 @@
                   (nvim.buf_set_keymap 0 :n from to map-opts)
                         (nvim.set_keymap :n from to map-opts))))
 
+(defn remap [from to opts]
+    (let [map-opts {:noremap true}]
+          (if (a.get opts :local?)
+                  (nvim.buf_set_keymap 0 :n from to map-opts)
+                        (nvim.set_keymap :n from to map-opts))))
+
+(defn calnnoremap [from to opts]
+    (let [map-opts {:noremap true}
+                 from (.. "<leader>" from )]
+          (if (a.get opts :local?)
+                  (nvim.buf_set_keymap 0 :n from to map-opts)
+                        (nvim.set_keymap :n from to map-opts))))
+
 (defn lnnoremap [from to]
     (nnoremap (.. "<leader>" from) to))

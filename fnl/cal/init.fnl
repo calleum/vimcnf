@@ -1,6 +1,7 @@
 (module cal.init
   {autoload {plugin cal.plugin
-             nvim aniseed.nvim}})
+             nvim aniseed.nvim
+             }})
 
 ;;; Introduction
 
@@ -16,22 +17,35 @@
 
 
 ;;; Generic configuration
+(require :cal.options)
+(require :cal.keymap)
 
 (set nvim.o.termguicolors true)
 (set nvim.o.mouse "a")
-(set nvim.o.updatetime 500)
 (set nvim.o.timeoutlen 500)
 (set nvim.o.sessionoptions "blank,curdir,folds,help,tabpages,winsize")
 (set nvim.o.inccommand :split)
+(set nvim.o.hlsearch true)
+(set nvim.o.autoindent true)
+(set nvim.o.relativenumber true)
+(set nvim.o.expandtab true)
+(set nvim.o.scrolloff 10)
+(set nvim.wo.number true)
+(set nvim.o.breakindent true)
+(set nvim.o.undofile true)
+(set nvim.o.ignorecase true)
+(set nvim.o.smartcase true)
+(set nvim.o.updatetime 250)
+(set nvim.wo.signcolumn :yes)
 
-(nvim.ex.set :spell)
+; (nvim.ex.set :spell)
 (nvim.ex.set :list)
 
 
 ;;; Mappings
-
 (set nvim.g.mapleader " ")
-(set nvim.g.maplocalleader ",")
+(set nvim.g.maplocalleader " ")
+
 
 
 ;;; Plugins
@@ -40,7 +54,7 @@
 ;; Packer configuration format: https://github.com/wbthomason/packer.nvim
 (plugin.use
   :Olical/aniseed {}
-  :Olical/conjure {}
+  :Olical/conjure {:mod :conjure}
   :Olical/nvim-local-fennel {}
   :PaterJason/cmp-conjure {}
   :PeterRincker/vim-argumentative {}
@@ -60,12 +74,14 @@
   :hrsh7th/cmp-path {}
   :hrsh7th/nvim-cmp {:mod :cmp}
   :L3MON4D3/LuaSnip {:requires [[:saadparwaiz1/cmp_luasnip] [:rafamadriz/friendly-snippets]]}
-  :jiangmiao/auto-pairs {:mod :auto-pairs}
+  ; :jiangmiao/auto-pairs {:mod :auto-pairs}
   :lewis6991/impatient.nvim {}
+  :ethanholz/nvim-lastplace {}
   :marko-cerovac/material.nvim {:mod :material}
   :mbbill/undotree {:mod :undotree}
   :neovim/nvim-lspconfig {:mod :lspconfig}
   :nvim-lualine/lualine.nvim {:mod :lualine}
+  :nvim-telescope/telescope-ui-select.nvim {}
   :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}
   :radenling/vim-dispatch-neovim {}
   :tpope/vim-abolish {}
@@ -80,6 +96,7 @@
   :tpope/vim-unimpaired {}
   :tpope/vim-vinegar {}
   :nvim-treesitter/playground {}
+  :nvim-treesitter/nvim-treesitter-textobjects {}
   :nvim-treesitter/nvim-treesitter {:run ":TSUpdate" :mod :treesitter}
   :wbthomason/packer.nvim {}
   )

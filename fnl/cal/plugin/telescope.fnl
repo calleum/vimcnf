@@ -8,10 +8,10 @@
       {:defaults
        {:vimgrep_arguments ["rg" "--color=never" "--no-heading"
                             "--with-filename" "--line-number" "--column"
-                            "--smart-case" "--hidden" "--follow"
+                            "--smart-case" "--follow"
                             "-g" "!.git/"]}})
 
-    (util.lnnoremap :ff "Telescope find_files hidden=true")
+    (util.lnnoremap :ff "Telescope find_files hidden=false")
     (util.lnnoremap :f- "Telescope file_browser")
     (util.lnnoremap :fg "Telescope live_grep")
     (util.lnnoremap :* "Telescope grep_string")
@@ -29,5 +29,13 @@
     (util.lnnoremap :fsi "Telescope lsp_implementations")
     (util.lnnoremap :fsr "Telescope lsp_references")
     (util.lnnoremap :fsS "Telescope lsp_document_symbols")
-    (util.lnnoremap :fss "Telescope lsp_workspace_symbols")))
+    (util.lnnoremap :fss "Telescope lsp_workspace_symbols"))
 
+  ; (let [(ok? telescope/builtin) (pcall #(require :telescope.builtin))]
+  ;   (when ok?
+  ;     (let [opts {:cwd "~/.config/nvim/"
+  ;             :layout_strategy :horizontal
+  ;             :prompt_title "[Find In ~/.config/nvim/]"
+  ;             :shorten_path false}]
+  ;   (util.calnnoremap :sc telescope/builtin.find_files opts))))
+  )

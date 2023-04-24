@@ -3,7 +3,7 @@
              nvim aniseed.nvim}})
 
 (defn- map [from to opts]
-  (util.nnoremap from to opts))
+  (util.remap from to opts))
 
 
 (let [(ok? rt) (pcall #(require :rust-tools))]
@@ -12,7 +12,8 @@
   (local opts {:buffer bufnr})
   (map :K rt.hover_actions.hover_actions opts)
   (map :<Leader>a rt.code_action_group.code_action_group opts)
-  (map :<Leader>ru rt.runnables.runnables opts))
+  (map :<Leader>ru rt.runnables.runnables opts)
+  nil)
 
 (local rt-opts {:server {:capabilities ((. (require :cmp_nvim_lsp)
                                            :default_capabilities))
@@ -27,4 +28,4 @@
                                       :show_parameter_hints false}
                         :runnables {:use_telescope true}}})
 (rt.setup rt-opts)
-(rt.inlay_hints.disable)))      
+(rt.inlay_hints.disable)))
