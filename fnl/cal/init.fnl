@@ -15,11 +15,6 @@
 ;; You can learn all about Conjure and how to evaluate things by executing
 ;; :ConjureSchool in your Neovim. This will launch an interactive tutorial.
 
-
-;;; Generic configuration
-(require :cal.options)
-(require :cal.keymap)
-
 (set nvim.o.termguicolors true)
 (set nvim.o.mouse "a")
 (set nvim.o.timeoutlen 500)
@@ -45,6 +40,11 @@
 ;;; Mappings
 (set nvim.g.mapleader " ")
 (set nvim.g.maplocalleader " ")
+(set nvim.g.indent_blankline_char "┊")
+
+;;; Generic configuration
+(require :cal.options)
+(require :cal.keymap)
 
 
 
@@ -60,10 +60,11 @@
   :PeterRincker/vim-argumentative {}
   :simrat39/rust-tools.nvim {:mod :rust}
   :airblade/vim-gitgutter {}
+  :lukas-reineke/indent-blankline.nvim {}
   :clojure-vim/clojure.vim {}
   :clojure-vim/vim-jack-in {}
   :folke/which-key.nvim {:mod :which-key}
-  :danymat/neogen {}
+  :danymat/neogen {:mod :neogen}
   :lervag/vimtex {}
   :wlangstroth/vim-racket {}
   :ggandor/lightspeed.nvim {}
@@ -84,14 +85,14 @@
   :nvim-telescope/telescope-ui-select.nvim {}
   :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}
   :radenling/vim-dispatch-neovim {}
+  :numToStr/Comment.nvim {}
   :tpope/vim-abolish {}
-  :tpope/vim-commentary {}
   :tpope/vim-dispatch {}
   :tpope/vim-eunuch {}
   :tpope/vim-fugitive {}
   :tpope/vim-repeat {}
   :tpope/vim-sexp-mappings-for-regular-people {}
-  :tpope/vim-sleuth {}
+  ; :tpope/vim-sleuth {}
   :tpope/vim-surround {}
   :tpope/vim-unimpaired {}
   :tpope/vim-vinegar {}

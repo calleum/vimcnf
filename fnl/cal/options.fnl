@@ -8,6 +8,10 @@
 (nvim.ex.set "wildmode=full")
 (nvim.ex.set "wildoptions=pum")
 (nvim.ex.set "listchars-=eol:↵")
+(set nvim.o.shiftwidth 4)
+(set nvim.o.tabstop 4)
+(set nvim.o.softtabstop 4)
+(set nvim.o.scrolloff 10)
 
 (set nvim.o.undodir (.. (nvim.fn.stdpath "data") "/undo"))
 

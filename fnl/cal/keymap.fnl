@@ -5,7 +5,7 @@
 (defn- map [from to opts]
   (util.nnoremap from to opts))
 
-; (map :<leader>nd (. (require :neogen) :generate) {})
+(util.lnnoremap :nd "lua require'neogen'.generate() <CR>" {})
 (util.remap :<S-F7> ":%s/\\s\\+$//g<CR>" {})
 (util.remap :n :nzz {:noremap true :silent true})
 (util.remap :N :Nzz {:noremap true :silent true})

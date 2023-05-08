@@ -13,6 +13,7 @@
 
     (util.lnnoremap :ff "Telescope find_files hidden=false")
     (util.lnnoremap :f- "Telescope file_browser")
+    (util.lnnoremap :fw "Telescope grep_string")
     (util.lnnoremap :fg "Telescope live_grep")
     (util.lnnoremap :* "Telescope grep_string")
     (util.lnnoremap :fb "Telescope buffers")
