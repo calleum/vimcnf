@@ -1,7 +1,5 @@
-(module cal.init
-  {autoload {plugin cal.plugin
-             nvim aniseed.nvim
-             }})
+(local plugin (require :cal.plugin))
+(local nvim (require :aniseed.nvim))
 
 ;;; Introduction
 
@@ -16,7 +14,7 @@
 ;; :ConjureSchool in your Neovim. This will launch an interactive tutorial.
 
 (set nvim.o.termguicolors true)
-(set nvim.o.mouse "a")
+(set nvim.o.mouse :a)
 (set nvim.o.timeoutlen 500)
 (set nvim.o.sessionoptions "blank,curdir,folds,help,tabpages,winsize")
 (set nvim.o.inccommand :split)
@@ -36,7 +34,6 @@
 ; (nvim.ex.set :spell)
 (nvim.ex.set :list)
 
-
 ;;; Mappings
 (set nvim.g.mapleader " ")
 (set nvim.g.maplocalleader " ")
@@ -46,14 +43,14 @@
 (require :cal.options)
 (require :cal.keymap)
 
-
-
 ;;; Plugins
 
 ;; Run script/sync.sh to update, install and clean your plugins.
 ;; Packer configuration format: https://github.com/wbthomason/packer.nvim
+;; fnlfmt: skip
 (plugin.use
   :Olical/aniseed {}
+  :Olical/nfnl {}
   :Olical/conjure {:mod :conjure}
   :Olical/nvim-local-fennel {}
   :PaterJason/cmp-conjure {}
@@ -69,6 +66,12 @@
   :wlangstroth/vim-racket {}
   :ggandor/lightspeed.nvim {}
   :guns/vim-sexp {:mod :sexp}
+  :mfussenegger/nvim-jdtls {:requires [[:rcarriga/nvim-dap-ui]
+                            [:nvim-neotest/nvim-nio]
+                            [:williamboman/mason.nvim]
+                            [:jay-babu/mason-nvim-dap.nvim]
+                            [:leoluz/nvim-dap-go]
+                            [:calleum/nvim-jdtls-bundles {:run :./install-bundles.py}]] }
   :hrsh7th/cmp-buffer {}
   :hrsh7th/cmp-cmdline {}
   :hrsh7th/cmp-nvim-lsp {}
@@ -80,7 +83,7 @@
   :ethanholz/nvim-lastplace {}
   :marko-cerovac/material.nvim {:mod :material}
   :mbbill/undotree {:mod :undotree}
-  :neovim/nvim-lspconfig {:mod :lspconfig}
+  :neovim/nvim-lspconfig {:mod :lspconfig :requires [:j-hui/fidget.nvim]}
   :nvim-lualine/lualine.nvim {:mod :lualine}
   :nvim-telescope/telescope-ui-select.nvim {}
   :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}

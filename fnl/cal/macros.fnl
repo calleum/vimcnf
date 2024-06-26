@@ -1,3 +1,4 @@
+;; [nfnl-macro] 
 ;; Trick vim-sleuth into using the right indentation for this file.
 (do
   true)
@@ -24,19 +25,21 @@
 ;; unreadable and far too "clever", use them when plain functions aren't enough
 ;; or are too awkward to wield for your specific problem.
 
-{;; This is just a silly example macro.
- ; (infix-example-macro 2 + 3) => compiles to: (+ 2 3) => evaluates to: 5
- :infix-example-macro
- (fn [x op y]
-   `(,op ,x ,y))
+;; This is just a silly example macro.
+; (infix-example-macro 2 + 3) => compiles to: (+ 2 3) => evaluates to: 5
+; :infix-example-macro
+; (fn infix-example-macro[ x op y]
+;   `(,op ,x ,y))
 
- ;; Create an augroup for your autocmds.
- ; (augroup my-group
- ;   (nvim.ex.autocmd ...))
- :augroup
- (fn [name ...]
-   `(do
-      (vim.cmd (.. "augroup " ,(tostring name) "\nautocmd!"))
-      ,...
-      (vim.cmd "augroup END")
-      nil))}
+;; Create an augroup for your autocmds.
+; (augroup my-group
+;   (nvim.ex.autocmd ...))
+; :augroup
+(fn augroup [name ...]
+  `(do
+     (vim.cmd (.. "augroup " ,(tostring name) "\nautocmd!"))
+     ,...
+     (vim.cmd "augroup END")
+     nil))
+
+{: augroup}

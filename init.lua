@@ -14,10 +14,12 @@ function ensure(user, repo)
 end
 
 ensure("wbthomason", "packer.nvim")
-ensure("Olical", "aniseed")
+-- ensure("Olical", "aniseed")
+ensure("Olical", "nfnl")
 ensure("lewis6991", "impatient.nvim")
 require("impatient")
-vim.g["aniseed#env"] = { module = "cal.init" }
+-- vim.g["aniseed#env"] = { module = "cal.init" }
+require("cal")
 
 -- require 'calleum'
 -- Gitsigns

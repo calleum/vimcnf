@@ -1,8 +1,8 @@
-(module cal.plugin.auto-pairs
-  {autoload {nvim aniseed.nvim}
-   require-macros [cal.macros]})
+(local uu (require :cal.util))
+(local nvim (uu.autoload :aniseed.nvim))
 
-(defn setup []
+(defn setup
+  []
   (let [auto-pairs nvim.g.AutoPairs]
     (when auto-pairs
       (tset auto-pairs "'" nil)
@@ -10,6 +10,5 @@
       (set nvim.b.AutoPairs auto-pairs))))
 
 (augroup auto-pairs-config
-  (nvim.ex.autocmd
-    :FileType "clojure,fennel,scheme"
-    (.. "call v:lua.require('" *module-name* "').setup()")))
+         (nvim.ex.autocmd :FileType "clojure,fennel,scheme"
+                          (.. "call v:lua.require('" *module-name* "').setup()")))
