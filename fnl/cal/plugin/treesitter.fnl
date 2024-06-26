@@ -1,5 +1,22 @@
-(let [(ok? ts) (pcall require :nvim-treesitter.configs)]
-  (when ok?
-    (ts.setup {:indent {:enable true}
-               :highlight {:enable true
-                           :additional_vim_regex_highlighting false}})))
+{1 :nvim-treesitter/nvim-treesitter
+                              :build ":TSUpdate"
+                              :config (fn [_ opts]
+                                        (tset (require :nvim-treesitter.install)
+                                              :prefer_git true)
+                                        ((. (require :nvim-treesitter.configs)
+                                            :setup) opts))
+                              :opts {:auto_install true
+                                     :ensure_installed [:bash
+                                                        :c
+                                                        :diff
+                                                        :html
+                                                        :lua
+                                                        :luadoc
+                                                        :java
+                                                        :typescript
+                                                        :markdown
+                                                        :vim
+                                                        :vimdoc]
+                                     :highlight {:additional_vim_regex_highlighting [:ruby]
+                                                 :enable true}
+                                     :indent {:disable [:ruby] :enable true}}}

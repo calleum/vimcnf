@@ -1,108 +1,97 @@
-(local plugin (require :cal.plugin))
-(local nvim (require :aniseed.nvim))
+(local vim _G.vim)
+(set vim.g.mapleader " ")
+(set vim.g.maplocalleader " ")
+(set vim.g.have_nerd_font true)
+(set vim.opt.number true)
+(set vim.opt.mouse :a)
+(set vim.opt.showmode false)
+(set vim.opt.clipboard :unnamedplus)
+(set vim.opt.breakindent true)
+(set vim.opt.undofile true)
+(set vim.opt.ignorecase true)
+(set vim.opt.smartcase true)
+(set vim.opt.signcolumn :yes)
+(set vim.opt.updatetime 250)
+(set vim.opt.timeoutlen 300)
+(set vim.opt.splitright true)
+(set vim.opt.splitbelow true)
+(set vim.opt.list true)
+(set vim.opt.listchars {:nbsp "␣" :tab "» " :trail "·"})
+(set vim.opt.inccommand :split)
+(set vim.opt.cursorline true)
+(set vim.opt.scrolloff 10)
+(set vim.opt.hlsearch true)
 
-;;; Introduction
-
-;; Aniseed compiles this (and all other Fennel files under fnl) into the lua
-;; directory. The init.lua file is configured to load this file when ready.
-
-;; We'll use modules, macros and functions to define our configuration and
-;; required plugins. We can use Aniseed to evaluate code as we edit it or just
-;; restart Neovim.
-
-;; You can learn all about Conjure and how to evaluate things by executing
-;; :ConjureSchool in your Neovim. This will launch an interactive tutorial.
-
-(set nvim.o.termguicolors true)
-(set nvim.o.mouse :a)
-(set nvim.o.timeoutlen 500)
-(set nvim.o.sessionoptions "blank,curdir,folds,help,tabpages,winsize")
-(set nvim.o.inccommand :split)
-(set nvim.o.hlsearch true)
-(set nvim.o.autoindent true)
-(set nvim.o.relativenumber true)
-(set nvim.o.expandtab true)
-(set nvim.o.scrolloff 10)
-(set nvim.wo.number true)
-(set nvim.o.breakindent true)
-(set nvim.o.undofile true)
-(set nvim.o.ignorecase true)
-(set nvim.o.smartcase true)
-(set nvim.o.updatetime 250)
-(set nvim.wo.signcolumn :yes)
-
-; (nvim.ex.set :spell)
-(nvim.ex.set :list)
-
-;;; Mappings
-(set nvim.g.mapleader " ")
-(set nvim.g.maplocalleader " ")
-(set nvim.g.indent_blankline_char "┊")
-
-;;; Generic configuration
-(require :cal.options)
-(require :cal.keymap)
-
-;;; Plugins
-
-;; Run script/sync.sh to update, install and clean your plugins.
-;; Packer configuration format: https://github.com/wbthomason/packer.nvim
-
-;; fnlfmt: skip
-(plugin.use
-  :Olical/aniseed {}
-  :Olical/nfnl {}
-  :Olical/conjure {:mod :conjure}
-  :Olical/nvim-local-fennel {}
-  :PaterJason/cmp-conjure {}
-  :PeterRincker/vim-argumentative {}
-  :simrat39/rust-tools.nvim {:mod :rust}
-  :airblade/vim-gitgutter {}
-  :lukas-reineke/indent-blankline.nvim {}
-  :clojure-vim/clojure.vim {}
-  :clojure-vim/vim-jack-in {}
-  :folke/which-key.nvim {:mod :which-key}
-  :danymat/neogen {:mod :neogen}
-  :lervag/vimtex {}
-  :wlangstroth/vim-racket {}
-  :ggandor/lightspeed.nvim {}
-  :guns/vim-sexp {:mod :sexp}
-  :mfussenegger/nvim-jdtls {:requires [[:rcarriga/nvim-dap-ui]
-                            [:nvim-neotest/nvim-nio]
-                            [:williamboman/mason.nvim]
-                            [:jay-babu/mason-nvim-dap.nvim]
-                            [:leoluz/nvim-dap-go]
-                            [:calleum/nvim-jdtls-bundles {:run :./install-bundles.py}]] }
-  :hrsh7th/cmp-buffer {}
-  :hrsh7th/cmp-cmdline {}
-  :hrsh7th/cmp-nvim-lsp {}
-  :hrsh7th/cmp-path {}
-  :hrsh7th/nvim-cmp {:mod :cmp}
-  :L3MON4D3/LuaSnip {:requires [[:saadparwaiz1/cmp_luasnip] [:rafamadriz/friendly-snippets]]}
-  ; :jiangmiao/auto-pairs {:mod :auto-pairs}
-  :lewis6991/impatient.nvim {}
-  :ethanholz/nvim-lastplace {}
-  :marko-cerovac/material.nvim {:mod :material}
-  :mbbill/undotree {:mod :undotree}
-  :neovim/nvim-lspconfig {:mod :lspconfig :requires [:j-hui/fidget.nvim]}
-  :nvim-lualine/lualine.nvim {:mod :lualine}
-  :nvim-telescope/telescope-fzf-native.nvim
-  :nvim-telescope/telescope-ui-select.nvim {}
-  :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}
-  :radenling/vim-dispatch-neovim {}
-  :numToStr/Comment.nvim {}
-  :tpope/vim-abolish {}
-  :tpope/vim-dispatch {}
-  :tpope/vim-eunuch {}
-  :tpope/vim-fugitive {}
-  :tpope/vim-repeat {}
-  :tpope/vim-sexp-mappings-for-regular-people {}
-  ; :tpope/vim-sleuth {}
-  :tpope/vim-surround {}
-  :tpope/vim-unimpaired {}
-  :tpope/vim-vinegar {}
-  :nvim-treesitter/playground {}
-  :nvim-treesitter/nvim-treesitter-textobjects {}
-  :nvim-treesitter/nvim-treesitter {:run ":TSUpdate" :mod :treesitter}
-  :wbthomason/packer.nvim {}
-  )
+(vim.keymap.set :n :<Esc> :<cmd>nohlsearch<CR>)
+(vim.keymap.set :n "[d" vim.diagnostic.goto_prev
+                {:desc "Go to previous [D]iagnostic message"})
+(vim.keymap.set :n "]d" vim.diagnostic.goto_next
+                {:desc "Go to next [D]iagnostic message"})
+(vim.keymap.set :n :<leader>e vim.diagnostic.open_float
+                {:desc "Show diagnostic [E]rror messages"})
+(vim.keymap.set :n :<leader>q vim.diagnostic.setloclist
+                {:desc "Open diagnostic [Q]uickfix list"})
+(vim.keymap.set :t :<Esc><Esc> "<C-\\><C-n>" {:desc "Exit terminal mode"})
+(vim.keymap.set :n :<C-h> :<C-w><C-h> {:desc "Move focus to the left window"})
+(vim.keymap.set :n :<C-l> :<C-w><C-l> {:desc "Move focus to the right window"})
+(vim.keymap.set :n :<C-j> :<C-w><C-j> {:desc "Move focus to the lower window"})
+(vim.keymap.set :n :<C-k> :<C-w><C-k> {:desc "Move focus to the upper window"})
+(vim.api.nvim_create_autocmd :TextYankPost
+                             {:callback (fn [] (vim.highlight.on_yank))
+                              :desc "Highlight when yanking (copying) text"
+                              :group (vim.api.nvim_create_augroup :kickstart-highlight-yank
+                                                                  {:clear true})})
+(local lazypath (.. (vim.fn.stdpath :data) :/lazy/lazy.nvim))
+(when (not (vim.loop.fs_stat lazypath))
+  (local lazyrepo "https://github.com/folke/lazy.nvim.git")
+  (vim.fn.system [:git
+                  :clone
+                  "--filter=blob:none"
+                  :--branch=stable
+                  lazyrepo
+                  lazypath]))
+(vim.opt.rtp:prepend lazypath)
+((. (require :lazy) :setup) {:checker {:enabled true}
+                             :install {:colorscheme [:habamax]}
+                             :spec [{:import :plugins.config}]})
+((. (require :lazy) :setup) [:tpope/vim-sleuth
+                             {1 :numToStr/Comment.nvim :opts {}}
+                             {1 :lewis6991/gitsigns.nvim
+                              :opts {:signs {:add {:text "+"}
+                                             :change {:text "~"}
+                                             :changedelete {:text "~"}
+                                             :delete {:text "_"}
+                                             :topdelete {:text "‾"}}}}
+                             {1 :folke/tokyonight.nvim
+                              :init (fn []
+                                      (vim.cmd.colorscheme :tokyonight-night)
+                                      (vim.cmd.hi "Comment gui=none"))
+                              :priority 1000}
+                             {1 :folke/todo-comments.nvim
+                              :dependencies [:nvim-lua/plenary.nvim]
+                              :event :VimEnter
+                              :opts {:signs false}}
+                             {1 :echasnovski/mini.nvim
+                              :config (fn []
+                                        ((. (require :mini.ai) :setup) {:n_lines 500})
+                                        ((. (require :mini.surround) :setup))
+                                        (local statusline
+                                               (require :mini.statusline))
+                                        (statusline.setup {:use_icons vim.g.have_nerd_font})
+                                        (set statusline.section_location
+                                             (fn [] "%2l:%-2v")))}
+                             ]
+                            {:ui {:icons (or (and vim.g.have_nerd_font {})
+                                             {:cmd "⌘"
+                                              :config "🛠"
+                                              :event "📅"
+                                              :ft "📂"
+                                              :init "⚙"
+                                              :keys "🗝"
+                                              :lazy "💤 "
+                                              :plugin "🔌"
+                                              :require "🌙"
+                                              :runtime "💻"
+                                              :source "📄"
+                                              :start "🚀"
+                                              :task "📌"})}})

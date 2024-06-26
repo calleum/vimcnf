@@ -1,61 +1,68 @@
-(local uu (require :cal.util))
-(local tele (require :cal.plugin.tele-custom))
-
-(let [(ok? telescope) (pcall #(require :telescope))]
-  (when ok?
-    (telescope.setup {:extensions {:ui-select [((. (require :telescope.themes)
-                                                               :get_dropdown) {})]}
-:defaults {:vimgrep_arguments [:rg
-                                                     :--color=never
-                                                     :--no-heading
-                                                     :--with-filename
-                                                     :--line-number
-                                                     :--column
-                                                     :--smart-case
-                                                     :--follow
-                                                     :-g
-                                                     :!.git/]}})
-
-    (fn tnmap [keys func desc]
-      (let [desc (.. "Telescope:" desc)] ; (print (.. desc keys (.. (tostring func))))
-        (uu.nmap-mi keys func desc)))
-
-    (tnmap :<leader>? (. (require :telescope.builtin) :oldfiles)
-           "[?] Find recently opened files")
-    (tnmap :<leader><space> (. (require :telescope.builtin) :buffers)
-           "[ ] Find existing buffers")
-    (tnmap :<leader>/
-           (fn []
-             ((. (require :telescope.builtin) :current_buffer_fuzzy_find) ((. (require :telescope.themes)
-                                                                              :get_dropdown) {:previewer false
-                                                                                              :winblend 10})))
-           "[/] Fuzzily search in current buffer]")
-    (tnmap :<leader>sf tele.project_files "[S]earch [F]iles")
-    (tnmap :<leader>sh (. (require :telescope.builtin) :help_tags)
-           "[S]earch [H]elp")
-    (tnmap :<leader>sw (. (require :telescope.builtin) :grep_string)
-           "[S]earch current [W]ord")
-    (tnmap :<leader>sg (. (require :telescope.builtin) :live_grep)
-           "[S]earch by [G]rep")
-    (tnmap :<leader>sd (. (require :telescope.builtin) :diagnostics)
-           "[S]earch [D]iagnostics")
-    (tnmap :<leader>fs tele.find_sametype "[F]ind files of [S]ame filetype")
-    (tnmap :<leader>ai tele.aws_infra_find "Find in [A]ws [I]nfrastructure")
-    (tnmap :<leader>aj tele.aws_jenkins_find "Find in [A]ws [J]enkins Pipeline")
-    (tnmap :<leader>dev tele.dev_files_find "Find in [A]ws [I]nfrastructure")
-    (tnmap :<leader>mkn tele.notes_find "Find in [A]ws [I]nfrastructure")
-    (tnmap :<leader>qf (. (require :telescope.builtin) :quickfix)
-           "Find in [A]ws [I]nfrastructure")
-    (tnmap :<leader>sc tele.config_find "[S]earch neovim [C]onfiguration files")
-    (tnmap :<leader>cd (vim.cmd "cd \"%:p:h\"")
-           "[C]hange [D]irectory to current file dir")
-    (tnmap :<leader>st (. (require :telescope.builtin) :tags)
-           "[S]earch c[T]ags in project")
-    (tnmap :<leader>sy
-           (. (require :telescope.builtin) :lsp_dynamic_workspace_symbols)
-           "[S]earch Dynamic Workspace S[Y]mbols")
-    (uu.nmap-mi :<leader>nd (. (require :neogen) :generate)
-                "Generate [N]eogen [D]ocumentation Template")
-    ))
-
- ((. (require :telescope) :load_extension) :ui-select)
+{1 :nvim-telescope/telescope.nvim
+                              :branch :0.1.x
+                              :config (fn []
+                                        ((. (require :telescope) :setup) {:extensions {:ui-select [((. (require :telescope.themes)
+                                                                                                       :get_dropdown))]}})
+                                        (pcall (. (require :telescope)
+                                                  :load_extension)
+                                               :fzf)
+                                        (pcall (. (require :telescope)
+                                                  :load_extension)
+                                               :ui-select)
+                                        (local builtin
+                                               (require :telescope.builtin))
+                                        (vim.keymap.set :n :<leader>sh
+                                                        builtin.help_tags
+                                                        {:desc "[S]earch [H]elp"})
+                                        (vim.keymap.set :n :<leader>sk
+                                                        builtin.keymaps
+                                                        {:desc "[S]earch [K]eymaps"})
+                                        (vim.keymap.set :n :<leader>sf
+                                                        builtin.find_files
+                                                        {:desc "[S]earch [F]iles"})
+                                        (vim.keymap.set :n :<leader>ss
+                                                        builtin.builtin
+                                                        {:desc "[S]earch [S]elect Telescope"})
+                                        (vim.keymap.set :n :<leader>sw
+                                                        builtin.grep_string
+                                                        {:desc "[S]earch current [W]ord"})
+                                        (vim.keymap.set :n :<leader>sg
+                                                        builtin.live_grep
+                                                        {:desc "[S]earch by [G]rep"})
+                                        (vim.keymap.set :n :<leader>sd
+                                                        builtin.diagnostics
+                                                        {:desc "[S]earch [D]iagnostics"})
+                                        (vim.keymap.set :n :<leader>sr
+                                                        builtin.resume
+                                                        {:desc "[S]earch [R]esume"})
+                                        (vim.keymap.set :n :<leader>s.
+                                                        builtin.oldfiles
+                                                        {:desc "[S]earch Recent Files (\".\" for repeat)"})
+                                        (vim.keymap.set :n :<leader><leader>
+                                                        builtin.buffers
+                                                        {:desc "[ ] Find existing buffers"})
+                                        (vim.keymap.set :n :<leader>/
+                                                        (fn []
+                                                          (builtin.current_buffer_fuzzy_find ((. (require :telescope.themes)
+                                                                                                 :get_dropdown) {:previewer false
+                                                                                                                                                                                                                                              :winblend 10})))
+                                                        {:desc "[/] Fuzzily search in current buffer"})
+                                        (vim.keymap.set :n :<leader>s/
+                                                        (fn []
+                                                          (builtin.live_grep {:grep_open_files true
+                                                                              :prompt_title "Live Grep in Open Files"}))
+                                                        {:desc "[S]earch [/] in Open Files"})
+                                        (vim.keymap.set :n :<leader>sn
+                                                        (fn []
+                                                          (builtin.find_files {:cwd (vim.fn.stdpath :config)}))
+                                                        {:desc "[S]earch [N]eovim files"}))
+                              :dependencies [:nvim-lua/plenary.nvim
+                                             {1 :nvim-telescope/telescope-fzf-native.nvim
+                                              :build :make
+                                              :cond (fn []
+                                                      (= (vim.fn.executable :make)
+                                                         1))}
+                                             [:nvim-telescope/telescope-ui-select.nvim]
+                                             {1 :nvim-tree/nvim-web-devicons
+                                              :enabled vim.g.have_nerd_font}]
+                              :event :VimEnter}
