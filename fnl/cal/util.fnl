@@ -16,34 +16,19 @@
 (fn lua-file [path]
   (nvim.ex.luafile path))
 
-; (. (a.merge opts {:callback to}))
-; (let [map-opts {:noremap true}
-;       too (.. ":" to :<cr>)]
-;   (if (a.get opts :local?)
-;       (if (= (type arg) :string)
-;           (nvim.buf_set_keymap 0 :n from too map-opts)
-;           (vim.keymap.set :n from too map-opts))
-;       (print "The argument is neither a string nor a function."))))
-;
 (fn remap [from to opts]
-  (if (= (type arg) :function)
-    (. (a.merge! opts {:callback to})))
   (let [map-opts (a.merge opts {:noremap true})]
+  (. (a.merge! opts {:callback to}))
     (if (a.get opts :local?)
-            (vim.keymap.set 0 :n from to map-opts)
+        ((if (= (type arg) :function)
+             ) (vim.keymap.set 0 :n from to
+                                                                 map-opts))
         (vim.keymap.set :n from to map-opts))))
 
 (fn nnoremap [from to opts]
   (remap from to opts))
 
-(fn nmap-mi [keys func desc] (vim.keymap.set :n keys func {: desc}))
-
-; (fn calnnoremap [from to opts]
-;     (let [map-opts {:noremap true}
-;                  from (.. "<leader>" from )]
-;           (if (a.get opts :local?)
-;                   (nvim.buf_set_keymap 0 :n from to map-opts)
-;                         (vim.keymap.set :n from to map-opts))))
+(fn nmap-ni [keys func desc] (vim.keymap.set :n keys func {: desc}))
 
 (fn lnnoremap [from to]
   (nnoremap (.. :<leader> from) to))

@@ -47,6 +47,7 @@
 
 ;; Run script/sync.sh to update, install and clean your plugins.
 ;; Packer configuration format: https://github.com/wbthomason/packer.nvim
+
 ;; fnlfmt: skip
 (plugin.use
   :Olical/aniseed {}
@@ -85,6 +86,7 @@
   :mbbill/undotree {:mod :undotree}
   :neovim/nvim-lspconfig {:mod :lspconfig :requires [:j-hui/fidget.nvim]}
   :nvim-lualine/lualine.nvim {:mod :lualine}
+  :nvim-telescope/telescope-fzf-native.nvim
   :nvim-telescope/telescope-ui-select.nvim {}
   :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}
   :radenling/vim-dispatch-neovim {}

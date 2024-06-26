@@ -41,7 +41,7 @@
         (map :<c-k> vim.lsp.buf.signature_help :vim.lsp.buf.signature_help)
         (map :<c-p> vim.diagnostic.goto_prev :vim.diagnostic.goto_prev)
         (map :<c-n> vim.diagnostic.goto_next :vim.diagnostic.goto_next)
-        (map :<leader>ed  vim.diagnostic.open_float :vim.diagnostic.open_float)
+        (map :<leader>ed vim.diagnostic.open_float :vim.diagnostic.open_float)
         (map :<leader>ca vim.lsp.buf.code_action :vim.lsp.buf.code_action)
         (map :<leader>rr vim.lsp.buf.rename :vim.lsp.buf.rename)
         (map :<leader>lf vim.lsp.buf.format :vim.lsp.buf.format)))))

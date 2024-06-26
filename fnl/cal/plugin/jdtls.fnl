@@ -1,6 +1,7 @@
 (local uu (require :cal.util))
 (local nvim (uu.autoload :aniseed.nvim))
 (local p (uu.autoload :cal.plugin))
+(local vim _G.vim)
 
 (fn map [from to opts]
   (uu.remap from to opts))
@@ -90,6 +91,6 @@
 
 (. (p.req :dap))
 ; ((. (require :dapui) :setup))	
-(nvim.echo "lang loaded")
+; (nvim.echo "lang loaded")
 
 {: config}

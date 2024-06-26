@@ -20,6 +20,7 @@
 
 (nvim.set_keymap :n :<F7> dapui.toggle
                  {:desc "Debug: See last session result."})
+
 (tset dap.listeners.after.event_initialized :dapui_config dapui.open)
 (tset dap.listeners.before.event_terminated :dapui_config dapui.close)
 (tset dap.listeners.before.event_exited :dapui_config dapui.close)
