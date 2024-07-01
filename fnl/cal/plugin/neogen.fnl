@@ -1,3 +1,4 @@
-(let [(ok? neogen) (pcall #(require :neogen))]
-  (when ok?
-    (neogen.setup {})))
+(local uu (require :cal.util))
+
+[(uu.tx :danymat/neogen
+        {:config true})]

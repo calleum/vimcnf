@@ -1,6 +1,5 @@
 (local uu (require :cal.util))
 (local nvim (uu.autoload :aniseed.nvim))
-(local p (uu.autoload :cal.plugin))
 (local vim _G.vim)
 
 (fn map [from to opts]
@@ -41,8 +40,13 @@
                    opts) ; (jdtls.setup_dap {:hotcodereplace :auto})
   (jdtls.setup.add_commands))
 
-(local capabilities
-       ((. (require :cmp_nvim_lsp) :default_capabilities) (vim.lsp.protocol.make_client_capabilities)))
+(var capabilities (vim.lsp.protocol.make_client_capabilities))
+(set capabilities
+     (vim.tbl_deep_extend :force capabilities
+                          ((. (require :cmp_nvim_lsp) :default_capabilities))))
+
+(var extended-client-capabilities jdtls.extendedClientCapabilities)
+(set extended-client-capabilities.resolveAdditionalTextEditsSupport true)
 
 (local launcher-jar
        (vim.fn.glob (.. java-share-dir
@@ -76,21 +80,53 @@
               :-data
               workspace-dir]
         :filetypes [:java]
-        :init_options {:bundles ((. (require :nvim-jdtls-bundles) :bundles))}
+        :init_options {:bundles ((. (require :nvim-jdtls-bundles) :bundles))
+                       :extendedClientCapabilities extended-client-capabilities}
         :on_attach on-attach
         :root_dir ((. (require :jdtls.setup) :find_root) [:.git
                                                           :mvnw
                                                           :pom.xml
                                                           :gradlew])
-        :settings {:java {:configuration {:runtimes [{:name :JavaSE-17
-                                                      :path java-17}
-                                                     {:name :JavaSE-11
-                                                      :path java-11}]}
-                          :format {:settings {:url (.. java-share-dir
-                                                       :codestyle.xml)}}}}})
+        :settings {:completion {:favoriteStaticMembers [:org.hamcrest.MatcherAssert.assertThat
+                                                        :org.hamcrest.Matchers.*
+                                                        :org.hamcrest.CoreMatchers.*
+                                                        :org.junit.jupiter.api.Assertions.*
+                                                        :java.util.Objects.requireNonNull
+                                                        :java.util.Objects.requireNonNullElse
+                                                        :org.mockito.Mockito.*]}
+                   :java {:configuration {:updateBuildConfiguration :interactive}
+                          :eclipse {:downloadSources true}
+                          :implementationsCodeLens {:enabled true}
+                          :maven {:downloadSources true :updateSnapshots false}
+                          :runtimes [{:name :JavaSE-17 :path java-17}
+                                     {:name :JavaSE-11 :path java-11}]}
+                   :referencesCodeLens {:enabled true}}
+        :signatureHelp {:enabled true}
+        :sources {:organizeImports {:starThreshold 9999
+                                    :staticStarThreshold 9999}}
+        :format {:settings {:url (.. java-share-dir :codestyle.xml)}}})
 
-(. (p.req :dap))
-; ((. (require :dapui) :setup))	
-; (nvim.echo "lang loaded")
-
-{: config}
+[(uu.tx :mfussenegger/nvim-jdtls
+        {:config (fn [_ opts]
+                   (vim.api.nvim_create_autocmd :Filetype
+                                                {:callback (fn []
+                                                             (if (and opts.root_dir
+                                                                      (not= opts.root_dir
+                                                                            ""))
+                                                                 ((. (require :jdtls)
+                                                                     :start_or_attach) opts)))
+                                                 :pattern :java})
+                   (vim.api.nvim_create_autocmd :LspAttach
+                                                {:callback (fn [args]
+                                                             (local client
+                                                                    (vim.lsp.get_client_by_id args.data.client_id))
+                                                             (when (= client.name
+                                                                      :jdtls)
+                                                               ((. (require :jdtls.dap)
+                                                                   :setup_dap_main_class_configs))))
+                                                 :pattern :*.java}))
+         :dependencies [:mfussenegger/nvim-dap
+                        :williamboman/mason-lspconfig.nvim]
+         :ft [:java]
+         :lazy true
+         :opts config})]

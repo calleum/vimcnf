@@ -1,5 +1,5 @@
-local config = require("cal.plugin.jdtls").config
-require("jdtls").start_or_attach(config)
+-- local config = require("cal.plugin.jdtls").config
+-- require("jdtls").start_or_attach(config)
 -- local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 -- local java_share_dir = vim.fn.getenv 'HOME' .. '/.local/share/java/'
 -- local workspace_dir = java_share_dir .. 'workspace/' .. project_name
@@ -92,4 +92,3 @@ require("jdtls").start_or_attach(config)
 -- }
 -- require('jdtls').start_or_attach(config)
 -- require("dapui").setup()
-

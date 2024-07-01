@@ -17,12 +17,10 @@
   (nvim.ex.luafile path))
 
 (fn remap [from to opts]
-  (let [map-opts (a.merge opts {:noremap true})]
-  (. (a.merge! opts {:callback to}))
+  (let [map-opts {:noremap true}]
+    (. (a.merge! opts {:callback to}))
     (if (a.get opts :local?)
-        ((if (= (type arg) :function)
-             ) (vim.keymap.set 0 :n from to
-                                                                 map-opts))
+        ((vim.keymap.set 0 :n from to map-opts))
         (vim.keymap.set :n from to map-opts))))
 
 (fn nnoremap [from to opts]
@@ -85,6 +83,23 @@
                       acc) (last args)
                     (fun.zip (fun.range 1 len) (fun.take (- len 1) args)))
         args)))
+
+(local a (autoload :aniseed.core))
+
+(fn safe-require-plugin-config [name]
+  "Safely require a module under the cal.plugin.* prefix. Will catch errors
+  and print them while continuing execution, allowing other plugins to load
+  even if one configuration module is broken."
+  (let [(ok? val-or-err) (pcall require (.. :cal.plugin. name))]
+    (when (not ok?)
+      (print (.. "Plugin config error: " val-or-err)))))
+
+(fn req [name]
+  "A shortcut to building a require string for your plugin
+  configuration. Intended for use with packer's config or setup
+  configuration options. Will prefix the name with `cal.plugin.`
+  before requiring."
+  (.. "require('cal.plugin." name "')"))
 
 {: autoload
  : dev?
