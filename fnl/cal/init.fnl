@@ -78,6 +78,9 @@
                     {:dependencies [:nvim-lua/plenary.nvim]
                      :event :VimEnter
                      :opts {:signs false}})
+             (uu.tx :calleum/nvim-jdtls-bundles
+                    {:build :./install-bundles.py
+                     :dependencies [:nvim-lua/plenary.nvim]})
              (uu.tx :echasnovski/mini.nvim
                     {:config (fn []
                                ((. (require :mini.ai) :setup) {:n_lines 500})

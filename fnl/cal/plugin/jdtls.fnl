@@ -1,6 +1,9 @@
 (local uu (require :cal.util))
 (local nvim (uu.autoload :aniseed.nvim))
+(local a (uu.autoload :aniseed.core))
 (local vim _G.vim)
+
+(local java-cmds (vim.api.nvim_create_augroup :java_cmds {:clear true}))
 
 (fn map [from to opts]
   (uu.remap from to opts))
@@ -38,6 +41,7 @@
         {:config (fn [_ opts]
                    (vim.api.nvim_create_autocmd :Filetype
                                                 {:callback (fn []
+                                                             (print opts.root_dir)
                                                              (if (and opts.root_dir
                                                                       (not= opts.root_dir
                                                                             ""))
@@ -46,6 +50,7 @@
                                                  :pattern :java})
                    (vim.api.nvim_create_autocmd :LspAttach
                                                 {:callback (fn [args]
+                                                             (print :in_lspattach_callback)
                                                              (local client
                                                                     (vim.lsp.get_client_by_id args.data.client_id))
                                                              (when (= client.name
@@ -53,88 +58,141 @@
                                                                ((. (require :jdtls.dap)
                                                                    :setup_dap_main_class_configs))))
                                                  :pattern :*.java}))
-         :dependencies [:mfussenegger/nvim-dap
+         :dependencies [(uu.tx :mfussenegger/nvim-dap
+                               {:dependencies [(uu.tx :williamboman/mason.nvim
+                                                      {:opts {:ensure_installed [:java-debug-adapter
+                                                                                 :java-test]}})]})
                         :williamboman/mason-lspconfig.nvim
-                        (uu.tx :calleum/nvim-jdtls-bundles
-                               {:build :./install-bundles.py})]
+                        :folke/which-key.nvim]
          :ft [:java]
          :lazy true
-         :opts {: capabilities
-                :cmd [java-bin
-                      :-Declipse.application=org.eclipse.jdt.ls.core.id1
-                      :-Dosgi.bundles.defaultStartLevel=4
-                      (.. "-javaagent:" java-agent)
-                      :-Declipse.product=org.eclipse.jdt.ls.core.product
-                      :-Dlog.protocol=true
-                      :-Dlog.level=ALL
-                      :-Xms1g
-                      :-Xmx4g
-                      :--add-modules=ALL-SYSTEM
-                      :--add-opens
-                      :java.base/java.util=ALL-UNNAMED
-                      :--add-opens
-                      :java.base/java.lang=ALL-UNNAMED
-                      :-jar
-                      launcher-jar
-                      :-configuration
-                      config-dir
-                      :-data
-                      workspace-dir]
-                :filetypes [:java]
-                :init_options {:bundles ((. (require :nvim-jdtls-bundles)
-                                            :bundles))
-                               :extendedClientCapabilities (let [extended-client-capabilities (. (require :jdtls)
-                                                                                                 :extendedClientCapabilities)]
-                                                             (set extended-client-capabilities.resolveAdditionalTextEditsSupport
-                                                                  true)
-                                                             extended-client-capabilities)}
-                :on_attach (fn on-attach [_ bufnr] ; ((. (require :cal.keymap) :on_attach) _ bufnr)
-                             (local jdtls (require :jdtls))
-                             (local opts {:buffer bufnr :silent true})
-                             (map :<leader>b
-                                  (fn []
-                                    ((. (require :jdtls) :compile) :full))
-                                  {:desc "[B]uild jdtls project"})
-                             (map :<leader>da
-                                  (. (require :jdtls.dap)
-                                     :setup_dap_main_class_configs)
-                                  opts)
-                             (map :<leader>ta jdtls.test_class opts)
-                             (map :<leader>tm jdtls.test_nearest_method opts)
-                             (map :<leader>tb
-                                  (. (require :dap) :toggle_breakpoint) opts)
-                             (map :<leader>tr
-                                  (. (. (require :dap) :repl) :open) opts)
-                             (map :<leader>to
-                                  (. (. (. (require :telescope) :extensions)
-                                        :dap)
-                                     :commands)
-                                  opts)
-                             (map :<leader>tt (. (require :dapui) :toggle) opts)
-                             (map :<A-o> jdtls.organize_imports opts)
-                             (nvim.set_keymap :v :crm
-                                              (. (jdtls.test_class) [true]) opts)
-                             (. jdtls.setup.add_commands))
-                :root_dir ((. (require :jdtls.setup) :find_root) [:.git
-                                                                  :mvnw
-                                                                  :pom.xml
-                                                                  :gradlew])
-                :settings {:completion {:favoriteStaticMembers [:org.hamcrest.MatcherAssert.assertThat
-                                                                :org.hamcrest.Matchers.*
-                                                                :org.hamcrest.CoreMatchers.*
-                                                                :org.junit.jupiter.api.Assertions.*
-                                                                :java.util.Objects.requireNonNull
-                                                                :java.util.Objects.requireNonNullElse
-                                                                :org.mockito.Mockito.*]}
-                           :java {:configuration {:updateBuildConfiguration :interactive}
-                                  :eclipse {:downloadSources true}
-                                  :implementationsCodeLens {:enabled true}
-                                  :maven {:downloadSources true
-                                          :updateSnapshots false}
-                                  :runtimes [{:name :JavaSE-17 :path java-17}
-                                             {:name :JavaSE-11 :path java-11}]}
-                           :referencesCodeLens {:enabled true}}
-                :signatureHelp {:enabled true}
-                :sources {:organizeImports {:starThreshold 9999
-                                            :staticStarThreshold 9999}}
-                :format {:settings {:url (.. java-share-dir :codestyle.xml)}}}})]
+         :opts (fn [_ opts]
+                 (a.merge! opts
+                           {: capabilities
+                            :cmd [java-bin
+                                  :-Declipse.application=org.eclipse.jdt.ls.core.id1
+                                  :-Dosgi.bundles.defaultStartLevel=4
+                                  (.. "-javaagent:" java-agent)
+                                  :-Declipse.product=org.eclipse.jdt.ls.core.product
+                                  :-Dlog.protocol=true
+                                  :-Dlog.level=ALL
+                                  :-Xms1g
+                                  :-Xmx4g
+                                  :--add-modules=ALL-SYSTEM
+                                  :--add-opens
+                                  :java.base/java.util=ALL-UNNAMED
+                                  :--add-opens
+                                  :java.base/java.lang=ALL-UNNAMED
+                                  :-jar
+                                  launcher-jar
+                                  :-configuration
+                                  config-dir
+                                  :-data
+                                  workspace-dir]
+                            :filetypes [:java]
+                            :init_options {:jvm_args (.. "-javaagent:"
+                                                         java-agent)
+                                           :bundles ((. (require :nvim-jdtls-bundles)
+                                                        :bundles))}
+                            :on_attach (fn [_ bufnr] ; ((. (require :cal.keymap) :on_attach) _ bufnr)
+                                         (print (.. :in_on_attach_ bufnr))
+
+                                         (fn map [keys func desc]
+                                           (vim.keymap.set :n keys func
+                                                           {:buffer bufnr
+                                                            :desc (.. "JDTLS: "
+                                                                      desc)}))
+
+                                         (local jdtls (require :jdtls))
+                                         (jdtls.setup_dap {:hotcodereplace :auto})
+                                         (jdtls.setup.add_commands)
+                                         (local opts
+                                                {:buffer bufnr :silent true})
+                                         (map :<leader>b
+                                              (fn []
+                                                ((. (require :jdtls) :compile) :full))
+                                              {:desc "[B]uild jdtls project"})
+                                         (map :<leader>da
+                                              (. (require :jdtls.dap)
+                                                 :setup_dap_main_class_configs)
+                                              opts)
+                                         (map :<leader>ta jdtls.test_class opts)
+                                         (map :gd
+                                              (. (require :telescope.builtin)
+                                                 :lsp_definitions)
+                                              "[G]oto [D]efinition")
+                                         (map :gr
+                                              (. (require :telescope.builtin)
+                                                 :lsp_references)
+                                              "[G]oto [R]eferences")
+                                         (map :gI
+                                              (. (require :telescope.builtin)
+                                                 :lsp_implementations)
+                                              "[G]oto [I]mplementation")
+                                         (map :<leader>D
+                                              (. (require :telescope.builtin)
+                                                 :lsp_type_definitions)
+                                              "Type [D]efinition")
+                                         (map :<leader>ds
+                                              (. (require :telescope.builtin)
+                                                 :lsp_document_symbols)
+                                              "[D]ocument [S]ymbols")
+                                         (map :<leader>ws
+                                              (. (require :telescope.builtin)
+                                                 :lsp_dynamic_workspace_symbols)
+                                              "[W]orkspace [S]ymbols")
+                                         (map :<leader>rn vim.lsp.buf.rename
+                                              "[R]e[n]ame")
+                                         (map :<leader>ca
+                                              vim.lsp.buf.code_action
+                                              "[C]ode [A]ction")
+                                         (map :K vim.lsp.buf.hover
+                                              "Hover Documentation")
+                                         (map :gD vim.lsp.buf.declaration
+                                              "[G]oto [D]eclaration")
+                                         (map :<leader>tm
+                                              jdtls.test_nearest_method opts)
+                                         (map :<leader>tb
+                                              (. (require :dap)
+                                                 :toggle_breakpoint)
+                                              opts)
+                                         (map :<leader>tr
+                                              (. (. (require :dap) :repl) :open)
+                                              opts)
+                                         (map :<leader>to
+                                              (. (. (. (require :telescope)
+                                                       :extensions)
+                                                    :dap)
+                                                 :commands)
+                                              opts)
+                                         (map :<leader>tt
+                                              (. (require :dapui) :toggle) opts)
+                                         (map :<A-o> jdtls.organize_imports
+                                              opts)
+                                         (nvim.set_keymap :v :crm
+                                                          (. (jdtls.test_class)
+                                                             [true])
+                                                          opts))
+                            :root_dir (vim.fs.root 0 [:.git])
+                            :settings {:completion {:favoriteStaticMembers [:org.hamcrest.MatcherAssert.assertThat
+                                                                            :org.hamcrest.Matchers.*
+                                                                            :org.hamcrest.CoreMatchers.*
+                                                                            :org.junit.jupiter.api.Assertions.*
+                                                                            :java.util.Objects.requireNonNull
+                                                                            :java.util.Objects.requireNonNullElse
+                                                                            :org.mockito.Mockito.*]}
+                                       :java {:configuration {:updateBuildConfiguration :interactive}
+                                              :eclipse {:downloadSources true}
+                                              :implementationsCodeLens {:enabled true}
+                                              :maven {:downloadSources true
+                                                      :updateSnapshots false}
+                                              :runtimes [{:name :JavaSE-17
+                                                          :path java-17}
+                                                         {:name :JavaSE-11
+                                                          :path java-11}]}
+                                       :referencesCodeLens {:enabled true}}
+                            :signatureHelp {:enabled true}
+                            :sources {:organizeImports {:starThreshold 9999
+                                                        :staticStarThreshold 9999}}
+                            :format {:settings {:url (.. java-share-dir
+                                                         :codestyle.xml)}}}))})]

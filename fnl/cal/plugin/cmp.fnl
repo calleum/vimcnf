@@ -1,3 +1,4 @@
+(local uu (require :cal.util))
 {1 :hrsh7th/nvim-cmp
  :config (fn []
            (local cmp (require :cmp))
@@ -32,7 +33,14 @@
                                      (= (vim.fn.executable :make) 0))
                              (lua "return "))
                            "make install_jsregexp"))
-                 :dependencies {}}
+                 :dependencies [(uu.tx :rafamadriz/friendly-snippets
+                                       {:config (fn []
+                                                  ((. (require :luasnip.loaders.from_lua)
+                                                      :load) {:paths :./snippets})
+                                                  ((. (require :luasnip.loaders.from_vscode)
+                                                      :load) {:paths :./snippets})
+                                                  ((. (require :luasnip.loaders.from_vscode)
+                                                      :lazy_load)))})]}
                 :saadparwaiz1/cmp_luasnip
                 :hrsh7th/cmp-nvim-lsp
                 :hrsh7th/cmp-path]

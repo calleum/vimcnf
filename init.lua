@@ -19,6 +19,8 @@
 -- ensure("lewis6991", "impatient.nvim")
 -- require("impatient")
 -- -- vim.g["aniseed#env"] = { module = "cal.init" }
+local aniseed_path = vim.fn.stdpath("data") .. "/lazy/aniseed"
+vim.opt.rtp:prepend(aniseed_path)
 require("cal")
 
 -- require 'calleum'
