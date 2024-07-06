@@ -19,7 +19,7 @@
 
 (let [(cmp/ok? cmp) (pcall require :cmp)]
   (when cmp/ok?
-    (let [(luasnip/ok? luasnip) (pcall require :cmp)]
+    (let [(luasnip/ok? luasnip) (pcall require :luasnip)]
       (when luasnip/ok?
         (cmp.setup 
           {:mapping (cmp.mapping.preset.insert {:<C-Space> (cmp.mapping.complete {})
@@ -30,13 +30,12 @@
                                                        :<CR> (cmp.mapping.confirm {:select false})
                                                        })
                   :snippet {:expand (fn [args] (luasnip.lsp_expand args.body))}
-                  :sources [{:name :nvim_lsp}
+                  :sources [{:keyword_length 3 :name :nvim_lsp}
                             {:keyword_length 3
-                             :max_item_count 4
                              :name :nvim_lsp_signature_help}
                             {:name "conjure"}
                             {:keyword_length 3 :max_item_count 4 :name :nvim_lua}
-                            {:keyword_length 3 :max_item_count 4 :name :luasnip}
+                            {:keyword_length 2 :max_item_count 4 :name :luasnip}
                             {:keyword_length 5 :max_item_count 2 :name :buffer}
                             {:keyword_length 3 :name :path}
                             {:name :calc}]})

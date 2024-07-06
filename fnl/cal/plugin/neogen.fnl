@@ -2,5 +2,4 @@
 
 (let [(ok? neogen) (pcall #(require :neogen))]
   (when ok?
-    (neogen.setup {})))
- 
+    (neogen.setup {:enabled true :snippet_engine :luasnip})))

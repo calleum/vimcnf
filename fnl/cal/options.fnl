@@ -8,6 +8,7 @@
 (nvim.ex.set "wildmode=full")
 (nvim.ex.set "wildoptions=pum")
 (nvim.ex.set "listchars-=eol:↵")
+(nvim.ex.set "colorcolumn=101")
 (set nvim.o.shiftwidth 4)
 (set nvim.o.tabstop 4)
 (set nvim.o.softtabstop 4)

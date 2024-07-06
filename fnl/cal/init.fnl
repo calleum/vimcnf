@@ -46,8 +46,6 @@
 (require :cal.options)
 (require :cal.keymap)
 
-
-
 ;;; Plugins
 
 ;; Run script/sync.sh to update, install and clean your plugins.
@@ -67,14 +65,14 @@
   :danymat/neogen {:mod :neogen}
   :lervag/vimtex {}
   :wlangstroth/vim-racket {}
-  :ggandor/lightspeed.nvim {}
+  :ggandor/leap.nvim {:mod :leap}
   :guns/vim-sexp {:mod :sexp}
   :hrsh7th/cmp-buffer {}
   :hrsh7th/cmp-cmdline {}
   :hrsh7th/cmp-nvim-lsp {}
   :hrsh7th/cmp-path {}
   :hrsh7th/nvim-cmp {:mod :cmp}
-  :L3MON4D3/LuaSnip {:requires [[:saadparwaiz1/cmp_luasnip] [:rafamadriz/friendly-snippets]]}
+  :L3MON4D3/LuaSnip {:mod :snip-snip :requires [[:saadparwaiz1/cmp_luasnip] [:rafamadriz/friendly-snippets]]}
   ; :jiangmiao/auto-pairs {:mod :auto-pairs}
   :lewis6991/impatient.nvim {}
   :ethanholz/nvim-lastplace {}
@@ -85,7 +83,7 @@
   :nvim-telescope/telescope-ui-select.nvim {}
   :nvim-telescope/telescope.nvim {:mod :telescope :requires [[:nvim-lua/popup.nvim] [:nvim-lua/plenary.nvim]]}
   :radenling/vim-dispatch-neovim {}
-  :numToStr/Comment.nvim {}
+  :numToStr/Comment.nvim {:mod :cmt}
   :tpope/vim-abolish {}
   :tpope/vim-dispatch {}
   :tpope/vim-eunuch {}

@@ -17,6 +17,7 @@
                     :bashls
                     :texlab
                     :gopls
+                    :hls
                     :dockerls
                     :tsserver
                     :racket_langserver])
