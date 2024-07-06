@@ -10,7 +10,7 @@
                                                                         :desc (.. "LSP: "
                                                                                   desc)}))
 
-                                                     (map :gh
+                                                     (map :gd
                                                           (. (require :telescope.builtin)
                                                              :lsp_definitions)
                                                           "[G]oto [D]efinition")
