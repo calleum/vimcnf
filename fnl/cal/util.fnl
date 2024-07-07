@@ -1,25 +1,19 @@
-(local a (require :aniseed.core))
-(local nvim (require :aniseed.nvim))
 (local fun (require :cal.util.vendor.fun))
-(local config-path (nvim.fn.stdpath :config))
 (local vim _G.vim)
 
-(fn expand [path]
-  (nvim.fn.expand path))
-
-(fn glob [path]
-  (nvim.fn.glob path true true true))
-
-(fn exists? [path]
-  (= (nvim.fn.filereadable path) 1))
-
-(fn lua-file [path]
-  (nvim.ex.luafile path))
+(fn get [t k d]
+  (let [res (when (= (type t) :table)
+              (let [val (. t k)]
+                (when (not (= nil val))
+                  val)))]
+    (if (= nil res)
+        d
+        res)))
 
 (fn remap [from to opts]
   (let [map-opts {:noremap true}]
-    (. (a.merge! opts {:callback to}))
-    (if (a.get opts :local?)
+    (. (extend-or-override opts {:callback to}))
+    (if (get opts :local?)
         ((vim.keymap.set 0 :n from to map-opts))
         (vim.keymap.set :n from to map-opts))))
 
@@ -109,8 +103,6 @@
       (set new-config (vim.tbl_deep_extend :force config custom)))
   new-config)
 
-(local a (autoload :aniseed.core))
-
 (fn safe-require-plugin-config [name]
   "Safely require a module under the cal.plugin.* prefix. Will catch errors
   and print them while continuing execution, allowing other plugins to load
@@ -135,7 +127,6 @@
  : glob
  : exists?
  : lua-file
- : config-path
  : nnoremap
  : lnnoremap
  : remap
@@ -143,3 +134,4 @@
  : extend-or-override}
 
 ; : calnnoremap
+

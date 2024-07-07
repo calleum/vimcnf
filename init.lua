@@ -1,37 +1,41 @@
--- local execute = vim.api.nvim_exec
--- local fn = vim.fn
--- local fmt = string.format
--- --
--- local pack_path = fn.stdpath("data") .. "/lazy"
---
--- function ensure(user, repo)
--- 	-- Ensures a given github.com/USER/REPO is cloned in the pack/packer/start directory.
--- 	local install_path = fmt("%s/%s", pack_path, repo, repo)
--- 	if fn.empty(fn.glob(install_path)) > 0 then
--- 		execute(fmt("!git clone https://github.com/%s/%s %s", user, repo, install_path), {})
--- 		-- execute(fmt("packadd %s", repo), {})
--- 	end
--- end
---
--- -- ensure("wbthomason", "packer.nvim")
--- -- ensure("Olical", "aniseed")
--- ensure("Olical", "nfnl")
--- ensure("lewis6991", "impatient.nvim")
--- require("impatient")
--- -- vim.g["aniseed#env"] = { module = "cal.init" }
-local aniseed_path = vim.fn.stdpath("data") .. "/lazy/aniseed"
-vim.opt.rtp:prepend(aniseed_path)
-require("cal")
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
--- require 'calleum'
--- Gitsigns
---[[ require 'gitsigns'.setup {
-    signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' }
-    }
-} ]]
---
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"--branch=stable",
+		lazyrepo,
+		lazypath,
+	})
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
+end
+
+vim.opt.rtp:prepend(lazypath)
+
+-- validate that lazy is available
+if not pcall(require, "lazy") then
+  -- stylua: ignore
+  vim.api.nvim_echo({ { ("Unable to load lazy from: %s\n"):format(lazypath), "ErrorMsg" }, { "Press any key to exit...", "MoreMsg" } }, true, {})
+	vim.fn.getchar()
+	vim.cmd.quit()
+end
+
+--require("lazy").setup({
+--	"tpope/vim-sleuth",
+--	"tpope/vim-fugitive",
+--	"Olical/nfnl",
+--	"Olical/aniseed",
+--	{ import = "cal.plugin" },
+--})
+require("cal")

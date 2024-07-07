@@ -1,9 +1,9 @@
 (local vim _G.vim)
-(local uu (require :cal.util))
+(local fun (require :cal.util.vendor.fun))
 
 (set vim.g.mapleader " ")
 (set vim.g.maplocalleader " ")
-(set vim.g.have_nerd_font true)
+(set vim.g.have_nerd_font false)
 (set vim.opt.number true)
 (set vim.opt.mouse :a)
 (set vim.opt.showmode false)
@@ -63,44 +63,48 @@
 ;                              :install {:colorscheme [:habamax]}
 ;                              :spec [{:import :plugins.config}]})
 
-(local lazy (require :lazy))
-(lazy.setup [(uu.tx :tpope/vim-sleuth)
-             (uu.tx :tpope/vim-fugitive)
-             (uu.tx :Olical/nfnl)
-             (uu.tx :Olical/aniseed)
-             (uu.tx :numToStr/Comment.nvim {:opts {}})
-             (uu.tx :folke/tokyonight.nvim
-                    {:init (fn []
-                             (vim.cmd.colorscheme :tokyonight-night)
-                             (vim.cmd.hi "Comment gui=none"))
-                     :priority 1000})
-             (uu.tx :folke/todo-comments.nvim
-                    {:dependencies [:nvim-lua/plenary.nvim]
-                     :event :VimEnter
-                     :opts {:signs false}})
-             (uu.tx :calleum/nvim-jdtls-bundles
-                    {:build :./install-bundles.py
-                     :dependencies [:nvim-lua/plenary.nvim]})
-             (uu.tx :echasnovski/mini.nvim
-                    {:config (fn []
-                               ((. (require :mini.ai) :setup) {:n_lines 500})
-                               ((. (require :mini.surround) :setup))
-                               (local statusline (require :mini.statusline))
-                               (statusline.setup {:use_icons vim.g.have_nerd_font})
-                               (set statusline.section_location
-                                    (fn [] "%2l:%-2v")))})
-             {:import :cal.plugin}]
-            {:ui {:icons (or (and vim.g.have_nerd_font {})
-                             {:cmd "⌘"
-                              :config "🛠"
-                              :event "📅"
-                              :ft "📂"
-                              :init "⚙"
-                              :keys "🗝"
-                              :lazy "💤 "
-                              :plugin "🔌"
-                              :require "🌙"
-                              :runtime "💻"
-                              :source "📄"
-                              :start "🚀"
-                              :task "📌"})}})
+(fn last [xs]
+  (fun.nth (fun.length xs) xs))
+
+(fn tx [...]
+  "Slightly nicer syntax for things like defining dependencies.
+  Anything that relies on the {1 :foo :bar true} syntax can use this."
+  (let [args [...]
+        len (fun.length args)]
+    (if (= :table (type (last args)))
+        (fun.reduce (fn [acc n v]
+                      (tset acc n v)
+                      acc) (last args)
+                    (fun.zip (fun.range 1 len) (fun.take (- len 1) args)))
+        args)))
+
+((. (require :lazy) :setup) [(tx :tpope/vim-sleuth)
+                             (tx :tpope/vim-fugitive)
+                             (tx :tpope/vim-abolish)
+                             (tx :tpope/vim-surround)
+                             (tx :Olical/nfnl)
+                             (tx :Olical/aniseed)
+                             (tx :numToStr/Comment.nvim {:opts {}})
+                             (tx :folke/tokyonight.nvim
+                                 {:init (fn []
+                                          (vim.cmd.colorscheme :tokyonight-night)
+                                          (vim.cmd.hi "Comment gui=none"))
+                                  :priority 1000})
+                             (tx :folke/todo-comments.nvim
+                                 {:dependencies [:nvim-lua/plenary.nvim]
+                                  :event :VimEnter
+                                  :opts {:signs false}})
+                             (tx :calleum/nvim-jdtls-bundles
+                                 {:build :./install-bundles.py
+                                  :dependencies [:nvim-lua/plenary.nvim]})
+                             (tx :echasnovski/mini.nvim
+                                 {:config (fn []
+                                            ((. (require :mini.ai) :setup) {:n_lines 500})
+                                            ((. (require :mini.surround) :setup))
+                                            (local statusline
+                                                   (require :mini.statusline))
+                                            (statusline.setup {:use_icons vim.g.have_nerd_font})
+                                            (set statusline.section_location
+                                                 (fn [] "%2l:%-2v")))})
+                             {:import :cal.plugin}])
+

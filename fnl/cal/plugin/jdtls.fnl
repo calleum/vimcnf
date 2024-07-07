@@ -1,5 +1,4 @@
 (local uu (require :cal.util))
-(local nvim (uu.autoload :aniseed.nvim))
 (local vim _G.vim)
 
 (local java-cmds (vim.api.nvim_create_augroup :java_cmds {:clear true}))
@@ -18,10 +17,6 @@
        [(vim.fn.glob (.. java-share-dir
                          :java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar))])
 
-(vim.list_extend bundles (vim.split (vim.fn.glob (.. java-share-dir
-                                                     :vscode-java-test/server/*.jar))
-                                    "\n"))
-
 (var capabilities (vim.lsp.protocol.make_client_capabilities))
 (set capabilities
      (vim.tbl_deep_extend :force capabilities
@@ -31,26 +26,50 @@
        (vim.fn.glob (.. java-share-dir
                         :eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar)))
 
-(local config-dir
-       (vim.fn.glob (.. java-share-dir
-                        :eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_mac_arm)))
+(local config_basename (if (= (. (vim.uv.os_uname) :sysname) :Darwin)
+                           :config_mac_arm
+                           :config_linux))
+
+(local config-dir (vim.fn.glob (.. java-share-dir
+                                   :eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/
+                                   config_basename)))
 
 (local java-agent (.. java-share-dir :lombok.jar))
+(fn get-bundles []
+  (local tools [:java-test :java-debug-adapter])
+  (local java-test-path (: ((. (require :mason-registry) :get_package) :java-test)
+                           :get_install_path))
+  (local java-test-bundle (vim.split (vim.fn.glob (.. java-test-path
+                                                      :/extension/server/*.jar))
+                                     "\n"))
+  (local path {})
+  (set path.bundles {})
+  (when (not= (. java-test-bundle 1) "")
+    (vim.list_extend path.bundles java-test-bundle))
+  (local java-debug-path (: ((. (require :mason-registry) :get_package) :java-debug-adapter)
+                            :get_install_path))
+  (local java-debug-bundle (vim.split (vim.fn.glob (.. java-debug-path
+                                                       :/extension/server/com.microsoft.java.debug.plugin-*.jar))
+                                      "\n"))
+  (when (not= (. java-debug-bundle 1) "")
+    (vim.list_extend path.bundles java-debug-bundle))
+  path.bundles)
 
 [(uu.tx :mfussenegger/nvim-jdtls
         {:config (fn [_ opts]
-                   (vim.api.nvim_create_autocmd :FileType
-                                                {:callback (fn [event]
-                                                             (local jdtls
-                                                                    (require :jdtls))
-                                                             ; (print (vim.inspect opts))
-                                                             (vim.lsp.set_log_level :trace)
-                                                             (if (and opts.root_dir
-                                                                      (not= opts.root_dir
-                                                                            ""))
-                                                                 (jdtls.start_or_attach opts)))
-                                                 :group java-cmds
-                                                 :pattern :java})
+                   (vim.schedule (fn []
+                                   (vim.api.nvim_create_autocmd :FileType
+                                                                {:callback (fn [event]
+                                                                             (local jdtls
+                                                                                    (require :jdtls))
+                                                                             ; (print (vim.inspect opts))
+                                                                             (vim.lsp.set_log_level :trace)
+                                                                             (if (and opts.root_dir
+                                                                                      (not= opts.root_dir
+                                                                                            ""))
+                                                                                 (jdtls.start_or_attach opts)))
+                                                                 :group java-cmds
+                                                                 :pattern :java})))
                    (vim.api.nvim_create_autocmd :LspAttach
                                                 {:callback (fn [args]
                                                              (print (vim.inspect args))
@@ -62,18 +81,17 @@
                                                                ((. (require :jdtls.dap)
                                                                    :setup_dap_main_class_configs))))
                                                  :pattern :*.java
-                                                 :group java-cmds}))
-         ; (print "running start or attach first time!");
-         ; ((. (require :jdtls) :start_or_attach) opts))
+                                                 :group java-cmds})
+                   (vim.schedule (fn []
+                                   (local jdtls (require :jdtls))
+                                   (jdtls.start_or_attach opts))))
          :dependencies [(uu.tx :mfussenegger/nvim-dap
-                               ; {:dependencies [(uu.tx :williamboman/mason.nvim
-                               ;                        {:opts {:ensure_installed [:java-debug-adapter
-                               ;                                                   :java-test]}})]}
-                               )]
+                               {:dependencies [(uu.tx :williamboman/mason.nvim
+                                                      {:opts {:ensure_installed [:java-debug-adapter]}})]})]
          ; :williamboman/mason-lspconfig.nvim
          ; :folke/which-key.nvim]
          :ft [:java]
-         :lazy false
+         :lazy true
          :opts (fn [_ opts]
                  {: capabilities
                   :cmd [java-bin
@@ -97,8 +115,8 @@
                         :-data
                         workspace-dir]
                   :filetypes [:java]
-                  :on_attach (fn [_ bufnr] ; ((. (require :cal.keymap) :on_attach) _ bufnr)
-
+                  :init_options {:bundles (get-bundles)}
+                  :on_attach (fn [_ bufnr]
                                (fn map [keys func desc]
                                  (vim.keymap.set :n keys func
                                                  {:buffer bufnr
@@ -183,3 +201,4 @@
                   :sources {:organizeImports {:starThreshold 9999
                                               :staticStarThreshold 9999}}
                   :format {:settings {:url (.. java-share-dir :codestyle.xml)}}})})]
+

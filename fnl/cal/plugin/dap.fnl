@@ -41,7 +41,10 @@
                          dapui.close)
                    (tset dap.listeners.before.event_exited :dapui_config
                          dapui.close))
+         :lazy true
+         ; :enabled false
          :dependencies [:rcarriga/nvim-dap-ui
                         :nvim-neotest/nvim-nio
                         :williamboman/mason.nvim
                         :jay-babu/mason-nvim-dap.nvim]})]
+
