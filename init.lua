@@ -31,11 +31,11 @@ if not pcall(require, "lazy") then
 	vim.cmd.quit()
 end
 
---require("lazy").setup({
---	"tpope/vim-sleuth",
---	"tpope/vim-fugitive",
---	"Olical/nfnl",
---	"Olical/aniseed",
---	{ import = "cal.plugin" },
---})
+-- require("lazy").setup({
+-- 	"tpope/vim-sleuth",
+-- 	"tpope/vim-fugitive",
+-- 	"Olical/nfnl",
+-- 	"Olical/aniseed",
+-- 	{ import = "cal.plugin" },
+-- })
 require("cal")

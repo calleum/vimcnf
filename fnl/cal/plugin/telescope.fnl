@@ -25,6 +25,13 @@
                                    {:desc "[S]earch [D]iagnostics"})
                    (vim.keymap.set :n :<leader>sr builtin.resume
                                    {:desc "[S]earch [R]esume"})
+                   (vim.keymap.set :n :<Leader>tf
+                                   (fn []
+                                     ((. (. (. (require :telescope) :extensions)
+                                            :frecency)
+                                         :frecency) {:path_display [:shorten]
+                                                     :theme :ivy
+                                                     :workspace :CWD})))
                    (vim.keymap.set :n :<leader>s. builtin.oldfiles
                                    {:desc "[S]earch Recent Files (\".\" for repeat)"})
                    (vim.keymap.set :n :<leader><leader> builtin.buffers
@@ -33,7 +40,7 @@
                                    (fn []
                                      (builtin.current_buffer_fuzzy_find ((. (require :telescope.themes)
                                                                             :get_dropdown) {:previewer false
-                                                                                                                                                                                                    :winblend 10})))
+                                                                                            :winblend 10})))
                                    {:desc "[/] Fuzzily search in current buffer"})
                    (vim.keymap.set :n :<leader>s/
                                    (fn []
@@ -52,6 +59,8 @@
                                  (= (vim.fn.executable :make) 1))}
                         [:nvim-telescope/telescope-ui-select.nvim]
                         {1 :nvim-tree/nvim-web-devicons
-                         :enabled vim.g.have_nerd_font}]
+                         :enabled vim.g.have_nerd_font}
+                        {1 :nvim-telescope/telescope-frecency.nvim
+                         :config (fn []
+                                   ((. (require :telescope) :load_extension) :frecency))}]
          :event :VimEnter})]
-

@@ -107,4 +107,3 @@
                                             (set statusline.section_location
                                                  (fn [] "%2l:%-2v")))})
                              {:import :cal.plugin}])
-

@@ -1,7 +1,7 @@
 {1 :stevearc/conform.nvim
  :keys [{1 :<leader>f
          2 (fn []
-             ((. (require :conform) :format) {:async true :lsp_fallback true}))
+             ((. (require :conform) :format) {:async true :lsp_format :prefer}))
          :desc "[F]ormat buffer"
          :mode ""}]
  :lazy false
