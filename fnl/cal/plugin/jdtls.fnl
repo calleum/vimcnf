@@ -82,7 +82,7 @@
   (jdtls.setup.add_commands)
   (map :<leader>b (fn []
                     ((. (require :jdtls) :compile) :full))
-       :desc "[B]uild jdtls project")
+       "[B]uild jdtls project")
   (map :<leader>da (. (require :jdtls.dap) :setup_dap_main_class_configs)
        "Setup [Da]p main class configs")
   (map :<leader>ta jdtls.test_class "[T]est [A]ll methods in file")
@@ -90,7 +90,7 @@
        "[G]oto [D]efinition")
   (map :gr (. (require :telescope.builtin) :lsp_references)
        "[G]oto [R]eferences")
-  (map :gI (. (require :telescope.builtin) :lsp_implementations)
+  (map :gi (. (require :telescope.builtin) :lsp_implementations)
        "[G]oto [I]mplementation")
   (map :<leader>D (. (require :telescope.builtin) :lsp_type_definitions)
        "Type [D]efinition")

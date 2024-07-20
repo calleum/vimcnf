@@ -84,6 +84,8 @@
                              (tx :tpope/vim-surround)
                              (tx :Olical/nfnl)
                              (tx :Olical/aniseed)
+                             (tx :mrcjkb/nvim-lastplace)
+                             (tx :creativecreature/pulse)
                              (tx :numToStr/Comment.nvim {:opts {}})
                              (tx :folke/tokyonight.nvim
                                  {:init (fn []

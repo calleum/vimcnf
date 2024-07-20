@@ -3,7 +3,8 @@
 [(uu.tx :nvim-telescope/telescope.nvim
         {:branch :0.1.x
          :config (fn []
-                   ((. (require :telescope) :setup) {:extensions {:ui-select [((. (require :telescope.themes)
+                   ((. (require :telescope) :setup) {:extensions {:frecency {:db_safe_mode false}
+                                                                  :ui-select [((. (require :telescope.themes)
                                                                                   :get_dropdown))]}})
                    (pcall (. (require :telescope) :load_extension) :fzf)
                    (pcall (. (require :telescope) :load_extension) :ui-select)
@@ -58,8 +59,7 @@
                          :cond (fn []
                                  (= (vim.fn.executable :make) 1))}
                         [:nvim-telescope/telescope-ui-select.nvim]
-                        {1 :nvim-tree/nvim-web-devicons
-                         :enabled vim.g.have_nerd_font}
+                        {1 :nvim-tree/nvim-web-devicons}
                         {1 :nvim-telescope/telescope-frecency.nvim
                          :config (fn []
                                    ((. (require :telescope) :load_extension) :frecency))}]

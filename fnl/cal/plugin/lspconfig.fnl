@@ -26,6 +26,12 @@
                                                                   (. (require :telescope.builtin)
                                                                      :lsp_implementations)
                                                                   "[G]oto [I]mplementation")
+                                                             (map :<leader>lC
+                                                                  "<Cmd>Lspsaga outgoing_calls<CR>"
+                                                                  "[l]oad outgoing [C]alls")
+                                                             (map :<leader>lc
+                                                                  "<Cmd>Lspsaga incoming_calls<CR>"
+                                                                  "[l]oad incoming [c]alls")
                                                              (map :<leader>D
                                                                   (. (require :telescope.builtin)
                                                                      :lsp_type_definitions)

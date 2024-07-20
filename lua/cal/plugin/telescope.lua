@@ -1,7 +1,7 @@
 -- [nfnl] Compiled from fnl/cal/plugin/telescope.fnl by https://github.com/Olical/nfnl, do not edit.
 local uu = require("cal.util")
 local function _1_()
-  do end (require("telescope")).setup({extensions = {["ui-select"] = {(require("telescope.themes")).get_dropdown()}}})
+  do end (require("telescope")).setup({extensions = {frecency = {db_safe_mode = false}, ["ui-select"] = {(require("telescope.themes")).get_dropdown()}}})
   pcall((require("telescope")).load_extension, "fzf")
   pcall((require("telescope")).load_extension, "ui-select")
   pcall((require("telescope")).load_extension, "dap")
@@ -39,4 +39,4 @@ end
 local function _7_()
   return (require("telescope")).load_extension("frecency")
 end
-return {uu.tx("nvim-telescope/telescope.nvim", {branch = "0.1.x", config = _1_, dependencies = {"nvim-lua/plenary.nvim", uu.tx("nvim-telescope/telescope-dap.nvim", {lazy = true}), {"nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = _6_}, {"nvim-telescope/telescope-ui-select.nvim"}, {"nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font}, {"nvim-telescope/telescope-frecency.nvim", config = _7_}}, event = "VimEnter"})}
+return {uu.tx("nvim-telescope/telescope.nvim", {branch = "0.1.x", config = _1_, dependencies = {"nvim-lua/plenary.nvim", uu.tx("nvim-telescope/telescope-dap.nvim", {lazy = true}), {"nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = _6_}, {"nvim-telescope/telescope-ui-select.nvim"}, {"nvim-tree/nvim-web-devicons"}, {"nvim-telescope/telescope-frecency.nvim", config = _7_}}, event = "VimEnter"})}

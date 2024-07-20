@@ -9,6 +9,8 @@ local function _1_()
     map("gd", (require("telescope.builtin")).lsp_definitions, "[G]oto [D]efinition")
     map("gr", (require("telescope.builtin")).lsp_references, "[G]oto [R]eferences")
     map("gI", (require("telescope.builtin")).lsp_implementations, "[G]oto [I]mplementation")
+    map("<leader>lC", "<Cmd>Lspsaga outgoing_calls<CR>", "[l]oad outgoing [C]alls")
+    map("<leader>lc", "<Cmd>Lspsaga incoming_calls<CR>", "[l]oad incoming [c]alls")
     map("<leader>D", (require("telescope.builtin")).lsp_type_definitions, "Type [D]efinition")
     map("<leader>ds", (require("telescope.builtin")).lsp_document_symbols, "[D]ocument [S]ymbols")
     map("<leader>ws", (require("telescope.builtin")).lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
@@ -55,4 +57,4 @@ end
 local function _8_(_, opts)
   return (require("lsp_signature")).setup(opts)
 end
-return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}}), uu.tx("nvimdev/lspsaga.nvim", {dependencies = {"nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons"}, event = "LspAttach", opts = {lightbulb = {enable = false}, outline = {win_width = 50, auto_preview = false}, symbol_in_winbar = {folder_level = 6, enable = false}}}), uu.tx("ray-x/lsp_signature.nvim", {config = _8_, event = "VeryLazy", opts = {zindex = 45, cursorhold_update = false, hint_enable = false}}), uu.tx("folke/trouble.nvim", {cmd = "Trouble", lazy = true, opts = {focus = true, auto_preview = false}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}}), uu.tx("nvimdev/lspsaga.nvim", {dependencies = {"nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons"}, event = "LspAttach", opts = {lightbulb = {enable = false}, outline = {win_width = 50, auto_preview = false}, symbol_in_winbar = {folder_level = 6, enable = false}}}), uu.tx("ray-x/lsp_signature.nvim", {config = _8_, event = "VeryLazy", opts = {zindex = 45, hint_enable = false, cursorhold_update = false}}), uu.tx("folke/trouble.nvim", {cmd = "Trouble", lazy = true, opts = {focus = true, auto_preview = false}})}
