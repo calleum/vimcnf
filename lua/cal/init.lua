@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/init.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/init.fnl"
 local vim = _G.vim
 local fun = require("cal.util.vendor.fun")
 vim.g.mapleader = " "
@@ -23,6 +23,7 @@ vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
+vim.g.guicursor = ""
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, {desc = "Go to previous [D]iagnostic message"})
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, {desc = "Go to next [D]iagnostic message"})
@@ -37,6 +38,13 @@ local function _1_()
   return vim.highlight.on_yank()
 end
 vim.api.nvim_create_autocmd("TextYankPost", {callback = _1_, desc = "Highlight when yanking (copying) text", group = vim.api.nvim_create_augroup("kickstart-highlight-yank", {clear = true})})
+vim.cmd("autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")
+local function _2_(metadata)
+  metadata["injection.language"] = "yaml"
+  return nil
+end
+vim.treesitter.query.add_directive("inject-go-tmpl!", _2_, {})
+vim.filetype.add({extension = {yml = "yaml"}, pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}})
 local lazypath = (vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -51,28 +59,31 @@ local function tx(...)
   local args = {...}
   local len = fun.length(args)
   if ("table" == type(last(args))) then
-    local function _3_(acc, n, v)
+    local function _4_(acc, n, v)
       acc[n] = v
       return acc
     end
-    return fun.reduce(_3_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
+    return fun.reduce(_4_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
   else
     return args
   end
 end
-local function _5_()
+local function _6_()
   vim.cmd.colorscheme("tokyonight-night")
   return vim.cmd.hi("Comment gui=none")
 end
-local function _6_()
-  do end (require("mini.ai")).setup({n_lines = 500})
+local function _7_()
+  return (require("lsp-notify")).setup({notify = require("notify")})
+end
+local function _8_()
+  do end (require("mini.ai")).setup()
   do end (require("mini.surround")).setup()
   local statusline = require("mini.statusline")
   statusline.setup({use_icons = vim.g.have_nerd_font})
-  local function _7_()
+  local function _9_()
     return "%2l:%-2v"
   end
-  statusline.section_location = _7_
+  statusline.section_location = _9_
   return nil
 end
-return (require("lazy")).setup({tx("tpope/vim-sleuth"), tx("tpope/vim-fugitive"), tx("tpope/vim-abolish"), tx("tpope/vim-surround"), tx("Olical/nfnl"), tx("Olical/aniseed"), tx("mrcjkb/nvim-lastplace"), tx("creativecreature/pulse"), tx("numToStr/Comment.nvim", {opts = {}}), tx("folke/tokyonight.nvim", {init = _5_, priority = 1000}), tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, event = "VimEnter", opts = {signs = false}}), tx("calleum/nvim-jdtls-bundles", {build = "./install-bundles.py", dependencies = {"nvim-lua/plenary.nvim"}}), tx("echasnovski/mini.nvim", {config = _6_}), {import = "cal.plugin"}})
+return (require("lazy")).setup({tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), tx("tpope/vim-sleuth"), tx("tpope/vim-fugitive"), tx("tpope/vim-abolish"), tx("tpope/vim-surround"), tx("Olical/nfnl"), tx("Olical/aniseed"), tx("mrcjkb/nvim-lastplace"), tx("isobit/vim-caddyfile"), tx("numToStr/Comment.nvim", {opts = {}}), tx("folke/tokyonight.nvim", {init = _6_, priority = 1000}), tx("rcarriga/nvim-notify"), tx("mrded/nvim-lsp-notify", {config = _7_}), tx("calleum/nvim-jdtls-bundles", {build = "./install-bundles.py", dependencies = {"nvim-lua/plenary.nvim"}}), tx("ckipp01/nvim-jenkinsfile-linter"), tx("echasnovski/mini.nvim", {config = _8_}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})

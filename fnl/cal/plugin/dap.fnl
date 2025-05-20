@@ -3,6 +3,12 @@
 [(uu.tx :mfussenegger/nvim-dap
         {:config (fn []
                    (local dap (require :dap))
+                   (set dap.configurations.java
+                        [{:hostName :127.0.0.1
+                          :name "Debug (Attach) - Remote"
+                          :port 8777
+                          :request :attach
+                          :type :java}])
                    (local dapui (require :dapui))
                    ((. (require :mason-nvim-dap) :setup) {:automatic_installation true
                                                           :ensure_installed {}
@@ -47,4 +53,3 @@
                         :nvim-neotest/nvim-nio
                         :williamboman/mason.nvim
                         :jay-babu/mason-nvim-dap.nvim]})]
-

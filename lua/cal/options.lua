@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/options.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/options.fnl"
 local uu = require("cal.util")
 local nvim = uu.autoload("aniseed.nvim")
 nvim.ex.runtime_("plugin/default.vim")
@@ -20,4 +20,4 @@ nvim.g.indent_blankline_char_highlight = "LineNr"
 nvim.g.indent_blankline_show_trailing_blankline_indent = false
 nvim.g.mkdp_echo_preview_url = 1
 nvim.g.vimtex_view_method = "zathura"
-return nil
+return vim.cmd("autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")

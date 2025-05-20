@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/conf/rust.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/conf/rust.fnl"
 local uu = require("cal.util")
 local nvim = uu.autoload("aniseed.nvim")
 local function map(from, to, opts)
@@ -25,7 +25,7 @@ if ok_3f then
     map("<Leader>ru", rt.runnables.runnables, opts)
     return nil
   end
-  local rt_opts = {server = {capabilities = (require("cmp_nvim_lsp")).default_capabilities(), on_attach = rt_on_attach, settings = {["rust-analyzer"] = {diagnostics = {enable = true, experimental = {enable = true}}}}, standalone = false}, tools = {inlay_hints = {disable = true, other_hints_prefix = "", parameter_hints_prefix = "", show_parameter_hints = false, auto = false}, runnables = {use_telescope = true}}}
+  local rt_opts = {server = {capabilities = (require("cmp_nvim_lsp")).default_capabilities(), on_attach = rt_on_attach, settings = {["rust-analyzer"] = {diagnostics = {enable = true, experimental = {enable = true}}}}, standalone = false}, tools = {inlay_hints = {disable = true, other_hints_prefix = "", parameter_hints_prefix = "", auto = false, show_parameter_hints = false}, runnables = {use_telescope = true}}}
   rt.setup(rt_opts)
   return rt.inlay_hints.disable()
 else

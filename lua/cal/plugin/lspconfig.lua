@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/lspconfig.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/lspconfig.fnl"
 local vim = _G.vim
 local uu = require("cal.util")
 local function _1_()
@@ -42,19 +42,25 @@ local function _1_()
   vim.api.nvim_create_autocmd("LspAttach", {callback = _2_, group = vim.api.nvim_create_augroup("kickstart-lsp-attach", {clear = true})})
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities = vim.tbl_deep_extend("force", capabilities, (require("cmp_nvim_lsp")).default_capabilities())
-  local servers = {fennel_language_server = {settings = {fennel = {{workspace = {library = vim.api.nvim_list_runtime_paths()}}, {diagnostics = {globals = {"vim"}}}}}}, tsserver = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
+  local servers
+  local function _7_(client, bufnr)
+    if (client.name == "ruff") then
+      client.server_capabilities.hoverProvider = false
+      return nil
+    else
+      return nil
+    end
+  end
+  servers = {pyright = {settings = {pyright = {disableOrganizeImports = true}, python = {analysis = {ignore = {""}}, diagnosticMode = "workspace"}}}, lemminx = {settings = {xml = {format = {joinCDATALines = true, joinContentLines = true, enabled = false, splitAttributes = false}}}}, ruff = {on_attach = _7_}, fennel_language_server = {settings = {fennel = {{workspace = {library = vim.api.nvim_list_runtime_paths()}}, {diagnostics = {globals = {"vim"}}}}}}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
   do end (require("mason")).setup()
   local ensure_installed = vim.tbl_keys((servers or {}))
   vim.list_extend(ensure_installed, {"stylua"})
   do end (require("mason-tool-installer")).setup({ensure_installed = ensure_installed})
-  local function _7_(server_name)
+  local function _9_(server_name)
     local server = (servers[server_name] or {})
     server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, (server.capabilities or {}))
     return ((require("lspconfig"))[server_name]).setup(server)
   end
-  return (require("mason-lspconfig")).setup({handlers = {_7_}})
+  return (require("mason-lspconfig")).setup({handlers = {_9_}})
 end
-local function _8_(_, opts)
-  return (require("lsp_signature")).setup(opts)
-end
-return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}}), uu.tx("nvimdev/lspsaga.nvim", {dependencies = {"nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons"}, event = "LspAttach", opts = {lightbulb = {enable = false}, outline = {win_width = 50, auto_preview = false}, symbol_in_winbar = {folder_level = 6, enable = false}}}), uu.tx("ray-x/lsp_signature.nvim", {config = _8_, event = "VeryLazy", opts = {zindex = 45, hint_enable = false, cursorhold_update = false}}), uu.tx("folke/trouble.nvim", {cmd = "Trouble", lazy = true, opts = {focus = true, auto_preview = false}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}}), uu.tx("folke/trouble.nvim", {cmd = "Trouble", lazy = true, opts = {focus = true, auto_preview = false}})}

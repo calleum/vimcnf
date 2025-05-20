@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/jdtls.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/jdtls.fnl"
 local uu = require("cal.util")
 local vim = _G.vim
 local java_cmds = vim.api.nvim_create_augroup("java_cmds", {clear = true})
@@ -6,39 +6,32 @@ local function map(from, to, opts)
   return uu.remap(from, to, opts)
 end
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
-local java_share_dir = (vim.fn.getenv("HOME") .. "/.local/share/java/")
+local java_share_dir = (vim.fn.getenv("HOME") .. "/.local/share/java")
 local java_home = (vim.fn.getenv("HOME") .. "/.sdkman/candidates/java")
 local java_bin = (java_home .. "/current/bin/java")
 local java_17 = (java_home .. "/17.0.10-graal")
 local java_11 = (java_home .. "/11.0.17-amzn")
-local workspace_dir = (java_share_dir .. "workspace/" .. project_name)
+local java_21 = vim.fn.glob((java_home .. "/21.*/"))
+local java_21_glob = (java_home .. "/21.*/bin/java")
+local java_21_bin = vim.fn.glob(java_21_glob)
+local workspace_dir = (java_share_dir .. "/workspace/" .. project_name)
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = vim.tbl_deep_extend("force", capabilities, (require("cmp_nvim_lsp")).default_capabilities())
-local launcher_jar = vim.fn.glob((java_share_dir .. "eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar"))
+local launcher_jar = vim.fn.glob((java_share_dir .. "/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar"))
 local config_basename
 if (vim.uv.os_uname().sysname == "Darwin") then
   config_basename = "config_mac_arm"
 else
   config_basename = "config_linux"
 end
-local config_dir = vim.fn.glob((java_share_dir .. "eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/" .. config_basename))
-local java_agent = (java_share_dir .. "lombok.jar")
+local config_dir = vim.fn.glob((java_share_dir .. "/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/" .. config_basename))
+local java_agent = (java_share_dir .. "/lombok.jar")
 local function setup_jdtls(opts)
   local function startup()
     local jdtls = require("jdtls")
     jdtls.extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
     return jdtls.start_or_attach(opts)
   end
-  local function _2_(event)
-    local client = vim.lsp.get_client_by_id(event.data.client_id)
-    if (client.name == "jdtls") then
-      do end (require("jdtls.dap")).setup_dap_main_class_configs()
-      return nil
-    else
-      return nil
-    end
-  end
-  vim.api.nvim_create_autocmd("LspAttach", {callback = _2_, pattern = "*.java", group = java_cmds})
   local function check_autocmd_group()
     local autocmds = vim.api.nvim_get_autocmds({group = "java_cmds", event = "FileType"})
     if vim.tbl_isempty(autocmds) then
@@ -47,7 +40,7 @@ local function setup_jdtls(opts)
       return print("Autocommand group 'java_cmds' is still active.")
     end
   end
-  local function _5_(event)
+  local function _3_(event)
     if (opts.root_dir and (opts.root_dir ~= "")) then
       startup()
       return nil
@@ -55,24 +48,25 @@ local function setup_jdtls(opts)
       return nil
     end
   end
-  return vim.api.nvim_create_autocmd("FileType", {callback = _5_, group = java_cmds, pattern = "java"})
+  return vim.api.nvim_create_autocmd("FileType", {callback = _3_, group = java_cmds, pattern = "java"})
 end
 local function on_attach(_, bufnr)
   local function map0(keys, func, desc)
     return vim.keymap.set("n", keys, func, {buffer = bufnr, desc = ("JDTLS: " .. desc)})
   end
-  local function _7_()
-    pcall(vim.lsp.codelens.refresh)
-    return nil
-  end
-  vim.api.nvim_create_autocmd("BufWritePost", {buffer = bufnr, callback = _7_, desc = "refresh codelens", group = java_cmds})
   local jdtls = require("jdtls")
   jdtls.setup_dap({hotcodereplace = "auto"})
   jdtls.setup.add_commands()
-  local function _8_()
-    return (require("jdtls")).compile("full")
+  local function on_compile_success(_0)
+    vim.notify("on-compile-success", vim.log.levels.INFO)
+    vim.api.nvim_echo({{"Echoed message", "WarningMsg"}}, true, {})
+    local telescope = require("telescope.builtin")
+    return telescope.quickfix()
   end
-  map0("<leader>b", _8_, "[B]uild jdtls project")
+  local function _5_()
+    return (require("jdtls")).compile("full", on_compile_success)
+  end
+  map0("<leader>b", _5_, "[B]uild jdtls project")
   map0("<leader>da", (require("jdtls.dap")).setup_dap_main_class_configs, "Setup [Da]p main class configs")
   map0("<leader>ta", jdtls.test_class, "[T]est [A]ll methods in file")
   map0("gd", (require("telescope.builtin")).lsp_definitions, "[G]oto [D]efinition")
@@ -93,7 +87,7 @@ local function on_attach(_, bufnr)
   return map0("<A-o>", jdtls.organize_imports, "Organize Imports")
 end
 local function configure(_, opts)
-  local config = {capabilities = capabilities, cmd = {java_bin, "-Declipse.application=org.eclipse.jdt.ls.core.id1", "-Dosgi.bundles.defaultStartLevel=4", ("-javaagent:" .. java_agent), "-Declipse.product=org.eclipse.jdt.ls.core.product", "-Dlog.protocol=true", "-Dlog.level=ALL", "-Xms1g", "-Xmx4g", "--add-modules=ALL-SYSTEM", "--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "-jar", launcher_jar, "-configuration", config_dir, "-data", workspace_dir}, filetypes = {"java"}, init_options = {bundles = (require("nvim-jdtls-bundles")).bundles()}, on_attach = on_attach, root_dir = vim.fs.root(0, {".git"}), settings = {completion = {favoriteStaticMembers = {"org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*", "org.hamcrest.CoreMatchers.*", "org.junit.jupiter.api.Assertions.*", "java.util.Objects.requireNonNull", "java.util.Objects.requireNonNullElse", "org.mockito.Mockito.*"}, importOrder = {"java", "javax", "org", "com", "\\#"}}, contentProvider = {preferred = "fernflower"}, java = {configuration = {runtimes = {{name = "JavaSE-17", path = java_17}, {name = "JavaSE-11", path = java_11}}, updateBuildConfiguration = "interactive"}, format = {settings = {url = (java_share_dir .. "codestyle.xml")}}, implementationsCodeLens = {enabled = true}, maven = {downloadSources = true, updateSnapshots = false}, referencesCodeLens = {enabled = true}, saveActions = {organizeImports = true}}, signatureHelp = {enabled = true}, sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}}}}
+  local config = {capabilities = capabilities, cmd = {java_21_bin, "-Declipse.application=org.eclipse.jdt.ls.core.id1", "-Dosgi.bundles.defaultStartLevel=4", ("-javaagent:" .. java_agent), "-Declipse.product=org.eclipse.jdt.ls.core.product", "-Dlog.protocol=true", "-Dlog.level=ALL", "-Xms2g", "-XX:+AlwaysPreTouch", "-Xmx8g", "--add-modules=ALL-SYSTEM", "--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED", "-jar", launcher_jar, "-configuration", config_dir, "-data", workspace_dir}, filetypes = {"java"}, init_options = {bundles = (require("nvim-jdtls-bundles")).bundles()}, on_attach = on_attach, root_dir = vim.fs.root(0, {".git", "erm-parent/pom.xml"}), settings = {completion = {favoriteStaticMembers = {"org.hamcrest.MatcherAssert.assertThat", "org.hamcrest.Matchers.*", "org.hamcrest.CoreMatchers.*", "org.junit.jupiter.api.Assertions.*", "java.util.Objects.requireNonNull", "java.util.Objects.requireNonNullElse", "org.mockito.Mockito.*"}, importOrder = {"java", "javax", "org", "com", "\\#"}}, contentProvider = {preferred = "fernflower"}, java = {configuration = {runtimes = {{name = "JavaSE-21", path = java_21}, {name = "JavaSE-17", path = java_17}, {name = "JavaSE-11", path = java_11}}, updateBuildConfiguration = "interactive"}, format = {settings = {url = (java_share_dir .. "/codestyle.xml")}}, maven = {downloadSources = true, lifecycleMappings = (java_share_dir .. "/lifecycle-mappings.xml"), updateSnapshots = false}, cleanup = {actionsOnSave = {"stringConcatToTextBlock", "addDeprecated", "qualifyMembers", "instanceofPatternMatch", "lambdaExpression"}}, saveActions = {organizeImports = true}}, sources = {organizeImports = {starThreshold = 9999, staticStarThreshold = 9999}}}}
   return setup_jdtls(config)
 end
 return {uu.tx("mfussenegger/nvim-jdtls", {config = configure, dependencies = {uu.tx("mfussenegger/nvim-dap")}, ft = {"java"}, lazy = true})}

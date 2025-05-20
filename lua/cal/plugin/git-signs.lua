@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/git-signs.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/git-signs.fnl"
 local function _1_(bufnr)
   local gitsigns = require("gitsigns")
   local function map(mode, l, r, opts)

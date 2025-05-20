@@ -1,7 +1,8 @@
--- [nfnl] Compiled from fnl/cal/plugin/dap.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/dap.fnl"
 local uu = require("cal.util")
 local function _1_()
   local dap = require("dap")
+  dap.configurations.java = {{hostName = "127.0.0.1", name = "Debug (Attach) - Remote", port = 8777, request = "attach", type = "java"}}
   local dapui = require("dapui")
   do end (require("mason-nvim-dap")).setup({automatic_installation = true, ensure_installed = {}, handlers = {}})
   vim.keymap.set("n", "<leader>tc", dap.continue, {desc = "Debug: Start/Continue"})

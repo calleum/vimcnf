@@ -1,8 +1,8 @@
--- [nfnl] Compiled from fnl/cal/plugin/lint.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/lint.fnl"
 local uu = require("cal.util")
 local function _1_()
   local lint = require("lint")
-  lint.linters_by_ft = {markdown = {"markdownlint"}}
+  lint.linters_by_ft = {markdown = {"markdownlint"}, python = {"mypy"}, groovy = {"npm-groovy-lint"}}
   local lint_augroup = vim.api.nvim_create_augroup("lint", {clear = true})
   local function _2_()
     return (require("lint")).try_lint()

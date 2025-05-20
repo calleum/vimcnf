@@ -1,7 +1,8 @@
 {1 :stevearc/conform.nvim
  :keys [{1 :<leader>f
          2 (fn []
-             ((. (require :conform) :format) {:async true :lsp_format :prefer}))
+             ((. (require :conform) :format) {:async true
+                                              :lsp_format :fallback}))
          :desc "[F]ormat buffer"
          :mode ""}]
  :lazy false
@@ -12,6 +13,10 @@
                            :timeout_ms 500})
         :formatters_by_ft {:lua [:stylua]
                            :markdown [:markdownlint :markdown-toc]
-                           :yaml [:yamlfmt :yamlfix]
-                           :fennel [:fnlfmt]}
+                           ; :yaml [:yamlfmt :yamlfix]
+                           :json [:jq]
+                           :fennel [:fnlfmt]
+                           :nix [:nixfmt]
+                           :python [:black]
+                           :groovy [:npm-groovy-lint]}
         :notify_on_error false}}

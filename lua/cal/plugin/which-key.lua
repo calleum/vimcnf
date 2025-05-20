@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/which-key.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/which-key.fnl"
 local vim = _G.vim
 local function _1_()
   do end (require("which-key")).setup({notify = false})

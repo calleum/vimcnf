@@ -96,9 +96,20 @@
                                              ((. (require :cmp_nvim_lsp)
                                                  :default_capabilities))))
                    (local servers
-                          {:fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
+                          {:pyright {:settings {:pyright {:disableOrganizeImports true}
+                                                :python {:analysis {:ignore [""]}
+                                                         :diagnosticMode :workspace}}}
+                           :lemminx {:settings {:xml {:format {:enabled false
+                                                               :splitAttributes false
+                                                               :joinCDATALines true
+                                                               ; :joinContentLines true
+                                                               }}}}
+                           :ruff {:on_attach (fn [client bufnr]
+                                               (when (= client.name :ruff)
+                                                 (set client.server_capabilities.hoverProvider
+                                                      false)))}
+                           :fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
                                                                         {:diagnostics {:globals [:vim]}}]}}
-                           :tsserver {}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})
                    ((. (require :mason) :setup))
                    (local ensure-installed (vim.tbl_keys (or servers {})))
@@ -120,20 +131,16 @@
                                                                             :setup) server))]}))
          :dependencies [{1 :williamboman/mason.nvim :config true}
                         :williamboman/mason-lspconfig.nvim
+                        ; (uu.tx :nvimdev/lspsaga.nvim
+                        ;        {:config (fn []
+                        ;                   ((. (require :lspsaga) :setup) {}))})
                         :WhoIsSethDaniel/mason-tool-installer.nvim
                         {1 :folke/neodev.nvim :opts {}}]})
- (uu.tx :nvimdev/lspsaga.nvim
-        {:dependencies [:nvim-treesitter/nvim-treesitter
-                        :nvim-tree/nvim-web-devicons]
-         :event :LspAttach
-         :opts {:lightbulb {:enable false}
-                :outline {:auto_preview false :win_width 50}
-                :symbol_in_winbar {:enable false :folder_level 6}}})
- (uu.tx :ray-x/lsp_signature.nvim
-        {:config (fn [_ opts]
-                   ((. (require :lsp_signature) :setup) opts))
-         :event :VeryLazy
-         :opts {:cursorhold_update false :hint_enable false :zindex 45}})
+ ; (uu.tx :ray-x/lsp_signature.nvim
+ ;        {:config (fn [_ opts]
+ ;                   ((. (require :lsp_signature) :setup) opts))
+ ;         :event :VeryLazy
+ ;         :opts {:cursorhold_update false :hint_enable false :zindex 45}})
  ; (uu.tx "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
  ;        {:branch :main
  ;         :config (fn []

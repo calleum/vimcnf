@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/keymap.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/keymap.fnl"
 local uu = require("cal.util")
 local vim = _G.vim
 uu.remap("<S-F7>", ":%s/\\s\\+$//g<CR>", {})

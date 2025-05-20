@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/conf/tele-custom.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/conf/tele-custom.fnl"
 local M = {}
 local function _1_(opts)
   local ok = pcall((require("telescope.builtin")).git_files, opts)

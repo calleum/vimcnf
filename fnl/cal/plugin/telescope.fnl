@@ -3,8 +3,7 @@
 [(uu.tx :nvim-telescope/telescope.nvim
         {:branch :0.1.x
          :config (fn []
-                   ((. (require :telescope) :setup) {:extensions {:frecency {:db_safe_mode false}
-                                                                  :ui-select [((. (require :telescope.themes)
+                   ((. (require :telescope) :setup) {:extensions {:ui-select [((. (require :telescope.themes)
                                                                                   :get_dropdown))]}})
                    (pcall (. (require :telescope) :load_extension) :fzf)
                    (pcall (. (require :telescope) :load_extension) :ui-select)
@@ -26,13 +25,6 @@
                                    {:desc "[S]earch [D]iagnostics"})
                    (vim.keymap.set :n :<leader>sr builtin.resume
                                    {:desc "[S]earch [R]esume"})
-                   (vim.keymap.set :n :<Leader>tf
-                                   (fn []
-                                     ((. (. (. (require :telescope) :extensions)
-                                            :frecency)
-                                         :frecency) {:path_display [:shorten]
-                                                     :theme :ivy
-                                                     :workspace :CWD})))
                    (vim.keymap.set :n :<leader>s. builtin.oldfiles
                                    {:desc "[S]earch Recent Files (\".\" for repeat)"})
                    (vim.keymap.set :n :<leader><leader> builtin.buffers
@@ -59,8 +51,5 @@
                          :cond (fn []
                                  (= (vim.fn.executable :make) 1))}
                         [:nvim-telescope/telescope-ui-select.nvim]
-                        {1 :nvim-tree/nvim-web-devicons}
-                        {1 :nvim-telescope/telescope-frecency.nvim
-                         :config (fn []
-                                   ((. (require :telescope) :load_extension) :frecency))}]
+                        {1 :nvim-tree/nvim-web-devicons}]
          :event :VimEnter})]

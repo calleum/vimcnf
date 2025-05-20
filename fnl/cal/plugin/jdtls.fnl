@@ -7,12 +7,15 @@
   (uu.remap from to opts))
 
 (local project-name (vim.fn.fnamemodify (vim.fn.getcwd) ":p:h:t"))
-(local java-share-dir (.. (vim.fn.getenv :HOME) :/.local/share/java/))
+(local java-share-dir (.. (vim.fn.getenv :HOME) :/.local/share/java))
 (local java-home (.. (vim.fn.getenv :HOME) :/.sdkman/candidates/java))
 (local java-bin (.. java-home :/current/bin/java))
 (local java-17 (.. java-home :/17.0.10-graal))
 (local java-11 (.. java-home :/11.0.17-amzn))
-(local workspace-dir (.. java-share-dir :workspace/ project-name))
+(local java-21 (vim.fn.glob (.. java-home :/21.*/)))
+(local java-21-glob (.. java-home :/21.*/bin/java))
+(local java-21-bin (vim.fn.glob java-21-glob))
+(local workspace-dir (.. java-share-dir :/workspace/ project-name))
 
 (var capabilities (vim.lsp.protocol.make_client_capabilities))
 (set capabilities
@@ -21,34 +24,25 @@
 
 (local launcher-jar
        (vim.fn.glob (.. java-share-dir
-                        :eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar)))
+                        :/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar)))
 
 (local config_basename (if (= (. (vim.uv.os_uname) :sysname) :Darwin)
                            :config_mac_arm
                            :config_linux))
 
 (local config-dir (vim.fn.glob (.. java-share-dir
-                                   :eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/
+                                   :/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/
                                    config_basename)))
 
-(local java-agent (.. java-share-dir :lombok.jar))
+(local java-agent (.. java-share-dir :/lombok.jar))
 (fn setup_jdtls [opts]
   (fn startup []
     (local jdtls (require :jdtls))
     (set jdtls.extendedClientCapabilities.resolveAdditionalTextEditsSupport
          true)
-    (jdtls.start_or_attach opts))
-
-  (vim.api.nvim_create_autocmd :LspAttach
-                               {:callback (fn [event]
-                                            (local client
-                                                   (vim.lsp.get_client_by_id event.data.client_id))
-                                            (when (= client.name :jdtls)
-                                              ((. (require :jdtls.dap)
-                                                  :setup_dap_main_class_configs))
-                                              nil))
-                                :pattern :*.java
-                                :group java-cmds})
+    (jdtls.start_or_attach opts)) ; (vim.api.nvim_create_autocmd :LspAttach ;                              {:callback (fn [event] ;                                           (local client ;                                                  (vim.lsp.get_client_by_id event.data.client_id))
+  ;                                           (when (= client.name :jdtls) ;                                             ((. (require :jdtls.dap) ;                                                 :setup_dap_main_class_configs))
+  ;                                             nil)) ;                               :pattern :*.java ;                               :group java-cmds})
 
   (fn check-autocmd-group []
     (let [autocmds (vim.api.nvim_get_autocmds {:group :java_cmds
@@ -68,20 +62,20 @@
 
 (fn on-attach [_ bufnr]
   (fn map [keys func desc]
-    (vim.keymap.set :n keys func {:buffer bufnr :desc (.. "JDTLS: " desc)}))
-
-  (vim.api.nvim_create_autocmd :BufWritePost
-                               {:buffer bufnr
-                                :callback (fn []
-                                            (pcall vim.lsp.codelens.refresh)
-                                            nil)
-                                :desc "refresh codelens"
-                                :group java-cmds})
+    (vim.keymap.set :n keys func {:buffer bufnr :desc (.. "JDTLS: " desc)})) ; (vim.api.nvim_create_autocmd :BufWritePost ;                              {:buffer bufnr ;                               :callback (fn [] ;                                           (pcall vim.lsp.codelens.refresh) ;                                           nil) ;                               :desc "refresh codelens" ;                               :group java-cmds})
   (local jdtls (require :jdtls))
   (jdtls.setup_dap {:hotcodereplace :auto})
   (jdtls.setup.add_commands)
-  (map :<leader>b (fn []
-                    ((. (require :jdtls) :compile) :full))
+
+  (fn on-compile-success [_]
+    (vim.notify :on-compile-success vim.log.levels.INFO)
+    (vim.api.nvim_echo [["Echoed message" :WarningMsg]] true {})
+    (local telescope (require :telescope.builtin))
+    (telescope.quickfix))
+
+  (map :<leader>b
+       (fn []
+         ((. (require :jdtls) :compile) :full on-compile-success))
        "[B]uild jdtls project")
   (map :<leader>da (. (require :jdtls.dap) :setup_dap_main_class_configs)
        "Setup [Da]p main class configs")
@@ -115,15 +109,16 @@
 (fn configure [_ opts]
   (local config
          {: capabilities
-          :cmd [java-bin
+          :cmd [java-21-bin
                 :-Declipse.application=org.eclipse.jdt.ls.core.id1
                 :-Dosgi.bundles.defaultStartLevel=4
                 (.. "-javaagent:" java-agent)
                 :-Declipse.product=org.eclipse.jdt.ls.core.product
                 :-Dlog.protocol=true
                 :-Dlog.level=ALL
-                :-Xms1g
-                :-Xmx4g
+                :-Xms2g
+                "-XX:+AlwaysPreTouch"
+                :-Xmx8g
                 :--add-modules=ALL-SYSTEM
                 :--add-opens
                 :java.base/java.util=ALL-UNNAMED
@@ -138,7 +133,7 @@
           :filetypes [:java]
           :init_options {:bundles ((. (require :nvim-jdtls-bundles) :bundles))}
           :on_attach on-attach
-          :root_dir (vim.fs.root 0 [:.git])
+          :root_dir (vim.fs.root 0 [:.git :erm-parent/pom.xml])
           :settings {:completion {:favoriteStaticMembers [:org.hamcrest.MatcherAssert.assertThat
                                                           :org.hamcrest.Matchers.*
                                                           :org.hamcrest.CoreMatchers.*
@@ -148,19 +143,28 @@
                                                           :org.mockito.Mockito.*]
                                   :importOrder [:java :javax :org :com "\\#"]}
                      :contentProvider {:preferred :fernflower}
-                     :java {:configuration {:runtimes [{:name :JavaSE-17
+                     :java {:configuration {:runtimes [{:name :JavaSE-21
+                                                        :path java-21}
+                                                       {:name :JavaSE-17
                                                         :path java-17}
                                                        {:name :JavaSE-11
                                                         :path java-11}]
                                             :updateBuildConfiguration :interactive}
                             :format {:settings {:url (.. java-share-dir
-                                                         :codestyle.xml)}}
-                            :implementationsCodeLens {:enabled true}
+                                                         :/codestyle.xml)}}
                             :maven {:downloadSources true
+                                    :lifecycleMappings (.. java-share-dir
+                                                           :/lifecycle-mappings.xml)
                                     :updateSnapshots false}
-                            :referencesCodeLens {:enabled true}
+                            ; :referencesCodeLens {:enabled true}
+                            ; :implementationsCodeLens {:enabled true}
+                            :cleanup {:actionsOnSave [:stringConcatToTextBlock
+                                                      :addDeprecated
+                                                      :qualifyMembers
+                                                      :instanceofPatternMatch
+                                                      :lambdaExpression]}
                             :saveActions {:organizeImports true}}
-                     :signatureHelp {:enabled true}
+                     ; :signatureHelp {:enabled true}
                      :sources {:organizeImports {:starThreshold 9999
                                                  :staticStarThreshold 9999}}}})
   (setup_jdtls config))

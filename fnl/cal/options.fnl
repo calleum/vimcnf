@@ -24,3 +24,5 @@
 (set nvim.g.indent_blankline_show_trailing_blankline_indent false)
 (set nvim.g.mkdp_echo_preview_url 1)
 (set nvim.g.vimtex_view_method :zathura)
+
+(vim.cmd "autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")

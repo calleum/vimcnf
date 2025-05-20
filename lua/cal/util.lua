@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/util.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/util.fnl"
 local fun = require("cal.util.vendor.fun")
 local vim = _G.vim
 local function get(t, k, d)

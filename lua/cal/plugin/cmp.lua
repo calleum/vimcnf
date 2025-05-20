@@ -1,4 +1,4 @@
--- [nfnl] Compiled from fnl/cal/plugin/cmp.fnl by https://github.com/Olical/nfnl, do not edit.
+local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/cmp.fnl"
 local uu = require("cal.util")
 local function _1_()
   local cmp = require("cmp")
