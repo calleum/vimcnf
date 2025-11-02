@@ -1,10 +1,10 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/dap.fnl"
+-- [nfnl] fnl/cal/plugin/dap.fnl
 local uu = require("cal.util")
 local function _1_()
   local dap = require("dap")
   dap.configurations.java = {{hostName = "127.0.0.1", name = "Debug (Attach) - Remote", port = 8777, request = "attach", type = "java"}}
   local dapui = require("dapui")
-  do end (require("mason-nvim-dap")).setup({automatic_installation = true, ensure_installed = {}, handlers = {}})
+  require("mason-nvim-dap").setup({automatic_installation = true, ensure_installed = {}, handlers = {}})
   vim.keymap.set("n", "<leader>tc", dap.continue, {desc = "Debug: Start/Continue"})
   vim.keymap.set("n", "<leader>si", dap.step_into, {desc = "Debug: Step Into"})
   vim.keymap.set("n", "<leader>so", dap.step_over, {desc = "Debug: Step Over"})
@@ -16,7 +16,7 @@ local function _1_()
   vim.keymap.set("n", "<leader>tB", _2_, {desc = "Debug: Set Breakpoint"})
   dapui.setup({controls = {icons = {disconnect = "\226\143\143", pause = "\226\143\184", play = "\226\150\182", run_last = "\226\150\182\226\150\182", step_back = "b", step_into = "\226\143\142", step_out = "\226\143\174", step_over = "\226\143\173", terminate = "\226\143\185"}}, icons = {collapsed = "\226\150\184", current_frame = "*", expanded = "\226\150\190"}})
   vim.keymap.set("n", "<leader>tt", dapui.toggle, {desc = "Debug: See last session result."})
-  do end (dap.listeners.after.event_initialized)["dapui_config"] = dapui.open
+  dap.listeners.after.event_initialized["dapui_config"] = dapui.open
   dap.listeners.before.event_terminated["dapui_config"] = dapui.close
   dap.listeners.before.event_exited["dapui_config"] = dapui.close
   return nil

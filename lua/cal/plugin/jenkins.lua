@@ -1,4 +1,4 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/jenkins.fnl"
+-- [nfnl] fnl/cal/plugin/jenkins.fnl
 local uu = require("cal.util")
 local function _1_()
   local jenkins_linter = require("jenkinsfile_linter")

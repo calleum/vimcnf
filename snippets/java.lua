@@ -3,22 +3,83 @@ local s = ls.snippet
 local sn = ls.snippet_node
 local t = ls.text_node
 local i = ls.insert_node
-local f = ls.function_node
 local c = ls.choice_node
 local d = ls.dynamic_node
-local r = ls.restore_node
-local l = require("luasnip.extras").lambda
-local rep = require("luasnip.extras").rep
-local p = require("luasnip.extras").partial
-local m = require("luasnip.extras").match
-local n = require("luasnip.extras").nonempty
-local dl = require("luasnip.extras").dynamic_lambda
-local fmt = require("luasnip.extras.fmt").fmt
-local fmta = require("luasnip.extras.fmt").fmta
-local types = require("luasnip.util.types")
-local conds = require("luasnip.extras.expand_conditions")
 
--- complicated function for dynamicNode.
+local function find_record_header_lines(start_line)
+	local lines = {}
+	local paren_count = 0
+	local found_record = false
+
+	local bufnr = vim.api.nvim_get_current_buf()
+	local total_lines = vim.api.nvim_buf_line_count(bufnr)
+
+	for lnum = start_line, total_lines do
+		local line = vim.api.nvim_buf_get_lines(bufnr, lnum - 1, lnum, false)[1]
+		if not found_record then
+			if line:find("record%s+[%w_]+%s*%(") then
+				found_record = true
+				table.insert(lines, line)
+				paren_count = paren_count + select(2, line:gsub("%(", "")) - select(2, line:gsub("%)", ""))
+				if paren_count <= 0 then
+					break
+				end
+			end
+		else
+			table.insert(lines, line)
+			paren_count = paren_count + select(2, line:gsub("%(", "")) - select(2, line:gsub("%)", ""))
+			if paren_count <= 0 then
+				break
+			end
+		end
+	end
+
+	return table.concat(lines, " ")
+end
+
+local function parse_record_header(header)
+	-- record name
+	local rec_name = header:match("record%s+([%w_]+)%s*%(")
+	local fields_raw = header:match("record%s+[%w_]+%s*%((.*)%)")
+	local fields = {}
+
+	if fields_raw then
+		-- Split by comma, but handle generics and parens naively
+		for part in fields_raw:gmatch("[^,]+") do
+			local type_name, field_name = part:match("^%s*([%w_<>%[%]]+)%s+([%w_]+)%s*$")
+			if type_name and field_name then
+				table.insert(fields, { type = type_name, name = field_name })
+			end
+		end
+	end
+
+	return rec_name, fields
+end
+
+local function javadoc_record_snippet(args, snip)
+	local cur_line = vim.api.nvim_win_get_cursor(0)[1]
+	local header = find_record_header_lines(cur_line + 1) -- next line (1-based)
+	local rec_name, fields = parse_record_header(header or "")
+	local nodes = {}
+
+	table.insert(nodes, t({ "/**", " * " }))
+	table.insert(nodes, i(1, "Summary of the record."))
+	table.insert(nodes, t({ "", " *" }))
+	if rec_name then
+		table.insert(nodes, t({ "", " * @record " .. rec_name }))
+	else
+		table.insert(nodes, t({ "", " * @record RecordName" }))
+	end
+
+	-- @param lines
+	for idx, f in ipairs(fields) do
+		table.insert(nodes, t({ "", " * @param " .. f.name .. " " }))
+		table.insert(nodes, i(idx + 1, f.type .. " "))
+	end
+
+	table.insert(nodes, t({ "", " */" }))
+	return sn(nil, nodes)
+end -- complicated function for dynamicNode.
 local function jdocsnip(args, _, old_state)
 	-- !!! old_state is used to preserve user-input here. DON'T DO IT THAT WAY!
 	-- Using a restoreNode instead is much easier.
@@ -95,9 +156,14 @@ local function jdocsnip(args, _, old_state)
 	snip.old_state = param_nodes
 	return snip
 end
-
 ls.add_snippets("java", {
 	-- Very long example for a java class.
+	s("doc", {
+		d(1, jdocsnip, { 2, 3, 4 }),
+	}),
+	s("jrecord", d(1, javadoc_record_snippet)),
+
+	s("@au", t("@author calleum.pecqueux")),
 	s("fn", {
 		d(6, jdocsnip, { 2, 4, 5 }),
 		t({ "", "" }),
@@ -221,5 +287,85 @@ end
 ls.add_snippets("java", {
 	s("logm", {
 		d(1, ts_log_choice, {}),
+	}),
+})
+
+-- Switch expression with pattern matching
+ls.add_snippets("java", {
+	s("switch", {
+		c(1, {
+			-- Switch expression (var = switch...)
+			sn(nil, {
+				t("var "),
+				i(1, "result"),
+				t(" = switch ("),
+				i(2, "value"),
+				t({ ") {", "\tcase " }),
+				i(3, "pattern1"),
+				t(" -> "),
+				i(4, "result1"),
+				t({ ";", "\tcase " }),
+				i(5, "pattern2"),
+				t(" -> "),
+				i(6, "result2"),
+				t({ ";", "\tdefault -> " }),
+				i(7, "defaultValue"),
+				t({ ";", "};" }),
+			}),
+			-- Switch expression (return switch...)
+			sn(nil, {
+				t("return switch ("),
+				i(1, "value"),
+				t({ ") {", "\tcase " }),
+				i(2, "pattern1"),
+				t(" -> "),
+				i(3, "result1"),
+				t({ ";", "\tcase " }),
+				i(4, "pattern2"),
+				t(" -> "),
+				i(5, "result2"),
+				t({ ";", "\tdefault -> " }),
+				i(6, "defaultValue"),
+				t({ ";", "};" }),
+			}),
+			-- Switch expression with block cases
+			sn(nil, {
+				t("var "),
+				i(1, "result"),
+				t(" = switch ("),
+				i(2, "value"),
+				t({ ") {", "\tcase " }),
+				i(3, "pattern1"),
+				t({ " -> {", "\t\t" }),
+				i(4, "// code"),
+				t({ "", "\t\tyield " }),
+				i(5, "result1"),
+				t({ ";", "\t}" }),
+				t({ "", "\tdefault -> " }),
+				i(6, "defaultValue"),
+				t({ ";", "};" }),
+			}),
+		}),
+		i(0),
+	}),
+
+	-- Pattern matching switch (type patterns)
+	s("switchp", {
+		t("return switch ("),
+		i(1, "obj"),
+		t({ ") {", "\tcase " }),
+		i(2, "String s"),
+		t(" -> "),
+		i(3, "s.length()"),
+		t({ ";", "\tcase " }),
+		i(4, "Integer i"),
+		t(" -> "),
+		i(5, "i"),
+		t({ ";", "\tcase null -> " }),
+		i(6, "0"),
+		t({ ";", "\tdefault -> " }),
+		i(7, "-1"),
+		t({ ";", "};" }),
+		i(0),
 	}),
 })

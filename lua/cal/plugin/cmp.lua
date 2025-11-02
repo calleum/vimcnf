@@ -1,4 +1,4 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/cmp.fnl"
+-- [nfnl] fnl/cal/plugin/cmp.fnl
 local uu = require("cal.util")
 local function _1_()
   local cmp = require("cmp")
@@ -31,8 +31,8 @@ local function _7_()
   return "make install_jsregexp"
 end
 local function _9_()
-  do end (require("luasnip.loaders.from_lua")).load({paths = "./snippets"})
-  do end (require("luasnip.loaders.from_vscode")).load({paths = "./snippets"})
-  return (require("luasnip.loaders.from_vscode")).lazy_load()
+  require("luasnip.loaders.from_lua").load({paths = "./snippets"})
+  require("luasnip.loaders.from_vscode").load({paths = "./snippets"})
+  return require("luasnip.loaders.from_vscode").lazy_load()
 end
 return {"hrsh7th/nvim-cmp", config = _1_, dependencies = {{"L3MON4D3/LuaSnip", build = _7_(), dependencies = {uu.tx("rafamadriz/friendly-snippets", {config = _9_})}}, "saadparwaiz1/cmp_luasnip", "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-path"}, event = "InsertEnter"}

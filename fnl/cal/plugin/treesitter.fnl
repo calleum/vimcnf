@@ -16,6 +16,7 @@
                                    :lua
                                    :luadoc
                                    :java
+                                   :javascript
                                    :typescript
                                    :markdown
                                    :vim
@@ -23,6 +24,7 @@
                 :highlight {:additional_vim_regex_highlighting [:ruby]
                             :enable true}
                 :indent {:disable [:ruby] :enable true}}})
- (uu.tx :nvim-treesitter/nvim-treesitter-textobjects {:lazy true})
  (uu.tx :nvim-treesitter/nvim-treesitter-textobjects
+        {:dependencies [:nvim-treesitter/nvim-treesitter]})
+ (uu.tx :nvim-treesitter/nvim-treesitter-context
         {:dependencies [:nvim-treesitter/nvim-treesitter]})]

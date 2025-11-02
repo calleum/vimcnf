@@ -1,9 +1,9 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/conf/tele-custom.fnl"
+-- [nfnl] fnl/cal/plugin/conf/tele-custom.fnl
 local M = {}
 local function _1_(opts)
-  local ok = pcall((require("telescope.builtin")).git_files, opts)
+  local ok = pcall(require("telescope.builtin").git_files, opts)
   if not ok then
-    return (require("telescope.builtin")).find_files(opts)
+    return require("telescope.builtin").find_files(opts)
   else
     return nil
   end
@@ -17,22 +17,22 @@ local function run_selection(prompt_bufnr, map)
     local selection = action_state.get_selected_entry()
     return vim.cmd(("!git log " .. selection[1]))
   end
-  do end (actions.select_default):replace(_3_)
+  actions.select_default:replace(_3_)
   return true
 end
 local function _4_()
   local opts = {attach_mappings = run_selection}
-  return (require("telescope.builtin")).find_files(opts)
+  return require("telescope.builtin").find_files(opts)
 end
 M.git_log = _4_
 M.find_sametype = function()
   local my_filetype = vim.fn.expand("%:e")
   local opts = {find_command = {"fd", "--type", "f", "-e", my_filetype, "--strip-cwd-prefix"}, layout_strategy = "horizontal", prompt_title = ("[Find in same filetype: " .. my_filetype .. "]"), shorten_path = false}
-  return (require("telescope.builtin")).find_files(opts)
+  return require("telescope.builtin").find_files(opts)
 end
 M.protecht_find = function()
   local opts = {cwd = "~/Documents/protecht/", layout_strategy = "horizontal", prompt_title = "[Find In ~/Documents/protecht]", shorten_path = true}
-  return (require("telescope.builtin")).find_files(opts)
+  return require("telescope.builtin").find_files(opts)
 end
 M.aws_jenkins_find = function()
   local opts = {cwd = "~/src/uni/", layout_strategy = "horizontal", prompt_title = "[Find In ~/src/uni]", shorten_path = false}

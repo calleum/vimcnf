@@ -7,14 +7,16 @@
          :mode ""}]
  :lazy false
  :opts {:format_on_save (fn [bufnr]
-                          (local disable-filetypes {:c true :cpp true})
+                          (local disable-filetypes
+                                 {:c true :cpp true :markdown true :xml true})
                           {:lsp_fallback (not (. disable-filetypes
                                                  (. (. vim.bo bufnr) :filetype)))
                            :timeout_ms 500})
         :formatters_by_ft {:lua [:stylua]
-                           :markdown [:markdownlint :markdown-toc]
+                           ; :markdown [:markdownlint :markdown-toc]
                            ; :yaml [:yamlfmt :yamlfix]
                            :json [:jq]
+                           :latex [:tex-fmt]
                            :fennel [:fnlfmt]
                            :nix [:nixfmt]
                            :python [:black]

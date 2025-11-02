@@ -1,4 +1,4 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/init.fnl"
+-- [nfnl] fnl/cal/init.fnl
 local vim = _G.vim
 local fun = require("cal.util.vendor.fun")
 vim.g.mapleader = " "
@@ -38,20 +38,29 @@ local function _1_()
   return vim.highlight.on_yank()
 end
 vim.api.nvim_create_autocmd("TextYankPost", {callback = _1_, desc = "Highlight when yanking (copying) text", group = vim.api.nvim_create_augroup("kickstart-highlight-yank", {clear = true})})
+local function _2_()
+  if (vim.bo.filetype == "java") then
+    return vim.cmd("%s/\\s\\+$//e")
+  else
+    return nil
+  end
+end
+vim.api.nvim_create_autocmd("BufWritePre", {callback = _2_, pattern = "*"})
 vim.cmd("autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")
-local function _2_(metadata)
+local function _4_(metadata)
   metadata["injection.language"] = "yaml"
   return nil
 end
-vim.treesitter.query.add_directive("inject-go-tmpl!", _2_, {})
-vim.filetype.add({extension = {yml = "yaml"}, pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}})
+vim.treesitter.query.add_directive("inject-go-tmpl!", _4_, {})
+vim.treesitter.language.register("xml", "jelly")
+vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", jelly = "jelly"}})
 local lazypath = (vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
   vim.fn.system({"git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath})
 else
 end
-do end (vim.opt.rtp):prepend(lazypath)
+vim.opt.rtp:prepend(lazypath)
 local function last(xs)
   return fun.nth(fun.length(xs), xs)
 end
@@ -59,31 +68,21 @@ local function tx(...)
   local args = {...}
   local len = fun.length(args)
   if ("table" == type(last(args))) then
-    local function _4_(acc, n, v)
+    local function _6_(acc, n, v)
       acc[n] = v
       return acc
     end
-    return fun.reduce(_4_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
+    return fun.reduce(_6_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
   else
     return args
   end
 end
-local function _6_()
+local function _8_()
   vim.cmd.colorscheme("tokyonight-night")
   return vim.cmd.hi("Comment gui=none")
 end
-local function _7_()
-  return (require("lsp-notify")).setup({notify = require("notify")})
+local function _9_()
+  return require("lsp-notify").setup({notify = require("notify")})
 end
-local function _8_()
-  do end (require("mini.ai")).setup()
-  do end (require("mini.surround")).setup()
-  local statusline = require("mini.statusline")
-  statusline.setup({use_icons = vim.g.have_nerd_font})
-  local function _9_()
-    return "%2l:%-2v"
-  end
-  statusline.section_location = _9_
-  return nil
-end
-return (require("lazy")).setup({tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), tx("tpope/vim-sleuth"), tx("tpope/vim-fugitive"), tx("tpope/vim-abolish"), tx("tpope/vim-surround"), tx("Olical/nfnl"), tx("Olical/aniseed"), tx("mrcjkb/nvim-lastplace"), tx("isobit/vim-caddyfile"), tx("numToStr/Comment.nvim", {opts = {}}), tx("folke/tokyonight.nvim", {init = _6_, priority = 1000}), tx("rcarriga/nvim-notify"), tx("mrded/nvim-lsp-notify", {config = _7_}), tx("calleum/nvim-jdtls-bundles", {build = "./install-bundles.py", dependencies = {"nvim-lua/plenary.nvim"}}), tx("ckipp01/nvim-jenkinsfile-linter"), tx("echasnovski/mini.nvim", {config = _8_}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})
+require("lazy").setup({tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), tx("tpope/vim-sleuth"), tx("tpope/vim-fugitive"), tx("tpope/vim-abolish"), tx("tpope/vim-surround"), tx("Olical/nfnl"), tx("mrcjkb/nvim-lastplace"), tx("isobit/vim-caddyfile"), tx("numToStr/Comment.nvim", {opts = {}}), tx("folke/tokyonight.nvim", {init = _8_, priority = 1000}), tx("rcarriga/nvim-notify"), tx("mrded/nvim-lsp-notify", {config = _9_}), tx("ckipp01/nvim-jenkinsfile-linter", {ft = {"jenkinsfile", "groovy"}}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})
+return vim.api.nvim_set_hl(0, "@jsni.java_call", {link = "Function"})

@@ -23,18 +23,17 @@
                           ((. (require :cmp_nvim_lsp) :default_capabilities))))
 
 (local launcher-jar
-       (vim.fn.glob (.. java-share-dir
-                        :/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1*.jar)))
+       (vim.fn.glob (.. :/opt/homebrew/Cellar/jdtls/*/libexec/plugins
+                        :/org.eclipse.equinox.launcher_1*.jar)))
 
 (local config_basename (if (= (. (vim.uv.os_uname) :sysname) :Darwin)
                            :config_mac_arm
                            :config_linux))
 
-(local config-dir (vim.fn.glob (.. java-share-dir
-                                   :/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/
+(local config-dir (vim.fn.glob (.. :/opt/homebrew/Cellar/jdtls/*/libexec/
                                    config_basename)))
 
-(local java-agent (.. java-share-dir :/lombok.jar))
+(local java-agent (.. java-share-dir :/lombok.jar=ECJ))
 (fn setup_jdtls [opts]
   (fn startup []
     (local jdtls (require :jdtls))
@@ -51,6 +50,38 @@
           (print "Autocommand group 'java_cmds' has been removed!")
           (print "Autocommand group 'java_cmds' is still active."))))
 
+  (vim.api.nvim_create_autocmd :FileType
+                               {:callback (fn []
+                                            (vim.keymap.set :n :s
+                                                            (fn []
+                                                              (local status-win
+                                                                     (vim.api.nvim_get_current_win))
+                                                              (vim.cmd "keepalt Gedit <cfile>")
+                                                              (local bufnr
+                                                                     (vim.api.nvim_get_current_buf))
+                                                              (var supports
+                                                                   false)
+                                                              (each [_ c (ipairs (vim.lsp.get_active_clients {: bufnr}))]
+                                                                (local caps
+                                                                       (or c.server_capabilities
+                                                                           {}))
+                                                                (when caps.documentFormattingProvider
+                                                                  (set supports
+                                                                       true)
+                                                                  (lua :break)))
+                                                              (when supports
+                                                                (vim.lsp.buf.format {:async false}))
+                                                              (vim.cmd :update)
+                                                              (pcall vim.cmd
+                                                                     :Gwrite)
+                                                              (when (vim.api.nvim_win_is_valid status-win)
+                                                                (vim.api.nvim_set_current_win status-win))
+                                                              (pcall vim.cmd :G))
+                                                            {:buffer true
+                                                             :desc "Format then stage file"
+                                                             :nowait true
+                                                             :silent true}))
+                                :pattern :fugitive})
   (vim.api.nvim_create_autocmd :FileType
                                {:callback (fn [event]
                                             (when (and opts.root_dir
@@ -133,7 +164,7 @@
           :filetypes [:java]
           :init_options {:bundles ((. (require :nvim-jdtls-bundles) :bundles))}
           :on_attach on-attach
-          :root_dir (vim.fs.root 0 [:.git :erm-parent/pom.xml])
+          :root_dir (vim.fs.root 0 [:.git :pom.xml :erm-parent/pom.xml])
           :settings {:completion {:favoriteStaticMembers [:org.hamcrest.MatcherAssert.assertThat
                                                           :org.hamcrest.Matchers.*
                                                           :org.hamcrest.CoreMatchers.*
@@ -143,12 +174,14 @@
                                                           :org.mockito.Mockito.*]
                                   :importOrder [:java :javax :org :com "\\#"]}
                      :contentProvider {:preferred :fernflower}
+                     :signatureHelp {:enabled true}
                      :java {:configuration {:runtimes [{:name :JavaSE-21
                                                         :path java-21}
                                                        {:name :JavaSE-17
                                                         :path java-17}
                                                        {:name :JavaSE-11
                                                         :path java-11}]
+                                            :compile {:nullAnalysis {:mode :automatic}}
                                             :updateBuildConfiguration :interactive}
                             :format {:settings {:url (.. java-share-dir
                                                          :/codestyle.xml)}}
@@ -170,6 +203,10 @@
   (setup_jdtls config))
 
 [(uu.tx :mfussenegger/nvim-jdtls {:config configure
-                                  :dependencies [(uu.tx :mfussenegger/nvim-dap)]
+                                  :dependencies [(uu.tx :mfussenegger/nvim-dap)
+                                                 (uu.tx :calleum/nvim-jdtls-bundles
+                                                        {:ft [:java]
+                                                         :build :./install-bundles.py
+                                                         :dependencies [:nvim-lua/plenary.nvim]})]
                                   :ft [:java]
                                   :lazy true})]

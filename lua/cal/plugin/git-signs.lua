@@ -1,4 +1,4 @@
-local _2afile_2a = "/Users/calleum.pecqueux/.config/nvim/fnl/cal/plugin/git-signs.fnl"
+-- [nfnl] fnl/cal/plugin/git-signs.fnl
 local function _1_(bufnr)
   local gitsigns = require("gitsigns")
   local function map(mode, l, r, opts)

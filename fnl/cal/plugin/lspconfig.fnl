@@ -96,18 +96,17 @@
                                              ((. (require :cmp_nvim_lsp)
                                                  :default_capabilities))))
                    (local servers
-                          {:pyright {:settings {:pyright {:disableOrganizeImports true}
-                                                :python {:analysis {:ignore [""]}
-                                                         :diagnosticMode :workspace}}}
+                          {:fish_lsp {}
+                           :basedpyright {}
                            :lemminx {:settings {:xml {:format {:enabled false
                                                                :splitAttributes false
                                                                :joinCDATALines true
                                                                ; :joinContentLines true
                                                                }}}}
-                           :ruff {:on_attach (fn [client bufnr]
-                                               (when (= client.name :ruff)
-                                                 (set client.server_capabilities.hoverProvider
-                                                      false)))}
+                           ; :ruff {:on_attach (fn [client bufnr]
+                           ;                     (when (= client.name :ruff)
+                           ;                       (set client.server_capabilities.hoverProvider
+                           ;                            false)))}
                            :fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
                                                                         {:diagnostics {:globals [:vim]}}]}}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})

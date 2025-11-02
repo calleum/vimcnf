@@ -49,6 +49,12 @@
                               :group (vim.api.nvim_create_augroup :kickstart-highlight-yank
                                                                   {:clear true})})
 
+(vim.api.nvim_create_autocmd :BufWritePre
+                             {:callback (fn []
+                                          (when (= vim.bo.filetype :java)
+                                            (vim.cmd "%s/\\s\\+$//e")))
+                              :pattern "*"})
+
 (vim.cmd "autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")
 ;
 ; (vim.api.nvim_create_augroup :filetypedetect {:clear true})
@@ -65,10 +71,13 @@
                                       (tset metadata :injection.language :yaml))
                                     {})
 
-(vim.filetype.add {:extension {:yml :yaml}
-                   :pattern {".*helm/.*/.*/templates/.*%.tpl" :helm
+(vim.treesitter.language.register :xml :jelly)
+
+(vim.filetype.add {:pattern {".*helm/.*/.*/templates/.*%.tpl" :helm
                              ".*helm/.*/.*/templates/.*%.ya?ml" :helm
-                             "helmfile.*%.ya?ml" :helm}})
+                             ".*chart/.*/templates/.*%.ya?ml" :helm
+                             "helmfile.*%.ya?ml" :helm}
+                   :extension {:yml :yaml :jelly :jelly}})
 
 ; (vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
 ;                              {:callback (fn []
@@ -132,7 +141,7 @@
                              (tx :tpope/vim-abolish)
                              (tx :tpope/vim-surround)
                              (tx :Olical/nfnl)
-                             (tx :Olical/aniseed)
+                             ; (tx :Olical/aniseed)
                              (tx :mrcjkb/nvim-lastplace)
                              ; (tx :calleum/pulse)
                              (tx :isobit/vim-caddyfile)
@@ -146,20 +155,11 @@
                              (tx :mrded/nvim-lsp-notify
                                  {:config (fn []
                                             ((. (require :lsp-notify) :setup) {:notify (require :notify)}))})
-                             (tx :calleum/nvim-jdtls-bundles
-                                 {:build :./install-bundles.py
-                                  :dependencies [:nvim-lua/plenary.nvim]})
-                             (tx :ckipp01/nvim-jenkinsfile-linter)
-                             (tx :echasnovski/mini.nvim
-                                 {:config (fn []
-                                            ((. (require :mini.ai) :setup))
-                                            ((. (require :mini.surround) :setup))
-                                            (local statusline
-                                                   (require :mini.statusline))
-                                            (statusline.setup {:use_icons vim.g.have_nerd_font})
-                                            (set statusline.section_location
-                                                 (fn [] "%2l:%-2v")))})
+                             (tx :ckipp01/nvim-jenkinsfile-linter
+                                 {:ft [:jenkinsfile :groovy]})
                              {:import :cal.plugin}]
                             {:dev {:path "~/src/calleum"
                                    :patterns [:calleum]
                                    :fallback true}})
+
+(vim.api.nvim_set_hl 0 "@jsni.java_call" {:link :Function})
