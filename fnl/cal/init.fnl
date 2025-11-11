@@ -23,6 +23,8 @@
 (set vim.opt.cursorline true)
 (set vim.opt.scrolloff 10)
 (set vim.opt.hlsearch true)
+(vim.opt.diffopt:append "algorithm:patience")
+(vim.opt.diffopt:append :indent-heuristic)
 (set vim.g.guicursor "")
 
 (vim.keymap.set :n :<Esc> :<cmd>nohlsearch<CR>)
@@ -112,9 +114,6 @@
                   lazypath]))
 
 (vim.opt.rtp:prepend lazypath)
-; ((. (require :lazy) :setup) {:checker {:enabled true}
-;                              :install {:colorscheme [:habamax]}
-;                              :spec [{:import :plugins.config}]})
 
 (fn last [xs]
   (fun.nth (fun.length xs) xs))

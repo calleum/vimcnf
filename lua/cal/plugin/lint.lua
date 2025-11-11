@@ -2,7 +2,7 @@
 local uu = require("cal.util")
 local function _1_()
   local lint = require("lint")
-  lint.linters_by_ft = {python = {"mypy"}, groovy = {"npm-groovy-lint"}}
+  lint.linters_by_ft = {markdown = {"markdownlint"}, python = {"mypy"}, groovy = {"npm-groovy-lint"}}
   local lint_augroup = vim.api.nvim_create_augroup("lint", {clear = true})
   local function _2_()
     return require("lint").try_lint()

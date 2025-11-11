@@ -3,7 +3,7 @@
         {:config (fn []
                    (local lint (require :lint))
                    (set lint.linters_by_ft
-                        {;:markdown [:markdownlint]
+                        {:markdown [:markdownlint]
                          :python [:mypy]
                          :groovy [:npm-groovy-lint]})
                    (local lint-augroup
