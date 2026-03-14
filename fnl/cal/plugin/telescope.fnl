@@ -11,12 +11,13 @@
                    (local builtin (require :telescope.builtin))
                    (vim.keymap.set :n :<leader>sh builtin.help_tags
                                    {:desc "[S]earch [H]elp"})
+                   (vim.keymap.set :n :<leader>sm builtin.man_pages
+                                   {:desc "[S]earch [M]an Pages"})
                    (vim.keymap.set :n :<leader>sk builtin.keymaps
                                    {:desc "[S]earch [K]eymaps"})
                    (vim.keymap.set :n :<leader>sf builtin.find_files
                                    {:desc "[S]earch [F]iles"})
-                   (vim.keymap.set :n :<leader>ss builtin.builtin
-                                   {:desc "[S]earch [S]elect Telescope"})
+                   ; (vim.keymap.set :n :<leader>ss builtin.builtin ;                 {:desc "[S]earch [S]elect Telescope"})
                    (vim.keymap.set :n :<leader>sw builtin.grep_string
                                    {:desc "[S]earch current [W]ord"})
                    (vim.keymap.set :n :<leader>sg builtin.live_grep
@@ -49,6 +50,10 @@
                                      (builtin.live_grep {:grep_open_files true
                                                          :prompt_title "Live Grep in Open Files"}))
                                    {:desc "[S]earch [/] in Open Files"})
+                   (vim.keymap.set :n :<leader>ss
+                                   (fn []
+                                     (builtin.find_files {:cwd (vim.fn.expand "~/.config/fish")}))
+                                   {:desc "[S]earch [F]ish files"})
                    (vim.keymap.set :n :<leader>sn
                                    (fn []
                                      (builtin.find_files {:cwd (vim.fn.stdpath :config)}))

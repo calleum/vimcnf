@@ -18,11 +18,14 @@
 (set vim.opt.splitright true)
 (set vim.opt.splitbelow true)
 (set vim.opt.list true)
+(set vim.opt.relativenumber true)
 (set vim.opt.listchars {:nbsp "␣" :tab "» " :trail "·"})
 (set vim.opt.inccommand :split)
 (set vim.opt.cursorline true)
 (set vim.opt.scrolloff 10)
 (set vim.opt.hlsearch true)
+(set vim.o.exrc true)
+(set vim.o.secure true)
 (vim.opt.diffopt:append "algorithm:patience")
 (vim.opt.diffopt:append :indent-heuristic)
 (set vim.g.guicursor "")
@@ -45,6 +48,10 @@
 (vim.keymap.set :n :<C-l> :<C-w><C-l> {:desc "Move focus to the right window"})
 (vim.keymap.set :n :<C-j> :<C-w><C-j> {:desc "Move focus to the lower window"})
 (vim.keymap.set :n :<C-k> :<C-w><C-k> {:desc "Move focus to the upper window"})
+(vim.keymap.set :n :<leader>cp
+                (fn []
+                  (vim.fn.setreg "+" (vim.fn.expand "%:p"))))
+
 (vim.api.nvim_create_autocmd :TextYankPost
                              {:callback (fn [] (vim.highlight.on_yank))
                               :desc "Highlight when yanking (copying) text"
@@ -148,7 +155,13 @@
                              (tx :folke/tokyonight.nvim
                                  {:init (fn []
                                           (vim.cmd.colorscheme :tokyonight-night)
-                                          (vim.cmd.hi "Comment gui=none"))
+                                          (vim.cmd.hi "Comment gui=none")
+                                          (vim.api.nvim_set_hl 0 :TermCursor
+                                                               {:bg :NONE
+                                                                :fg :NONE})
+                                          (vim.api.nvim_set_hl 0 :TermCursorNC
+                                                               {:bg :NONE
+                                                                :fg :NONE}))
                                   :priority 1000})
                              (tx :rcarriga/nvim-notify)
                              (tx :mrded/nvim-lsp-notify

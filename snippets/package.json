@@ -5,10 +5,15 @@
       {
         "language": [
           "all"
-          ],
+        ],
         "path": "./snippets.json"
+      },
+      {
+        "language": [
+          "fish"
+        ],
+        "path": "./fish.json"
       }
     ]
   }
 }
-

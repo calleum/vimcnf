@@ -2,6 +2,8 @@
 (local uu (require :cal.util))
 [(uu.tx :neovim/nvim-lspconfig
         {:config (fn []
+                   ; ERROR level only — default TRACE produces gigabyte logs.
+                   (vim.lsp.set_log_level :ERROR)
                    (vim.api.nvim_create_autocmd :LspAttach
                                                 {:callback (fn [event]
                                                              (fn map [keys
@@ -18,9 +20,15 @@
                                                                   (. (require :telescope.builtin)
                                                                      :lsp_definitions)
                                                                   "[G]oto [D]efinition")
+                                                             (map :<leader>oi
+                                                                  #(vim.lsp.buf.code_action {:apply true
+                                                                                             :context {:only [:source.organizeImports]}})
+                                                                  "[O]rganize [I]mports")
                                                              (map :gr
-                                                                  (. (require :telescope.builtin)
-                                                                     :lsp_references)
+                                                                  (fn []
+                                                                    ((. (require :telescope.builtin)
+                                                                        :lsp_references) {:path_display [:truncate]
+                                                                                          :fname_width 60}))
                                                                   "[G]oto [R]eferences")
                                                              (map :gI
                                                                   (. (require :telescope.builtin)
@@ -107,12 +115,39 @@
                            ;                     (when (= client.name :ruff)
                            ;                       (set client.server_capabilities.hoverProvider
                            ;                            false)))}
-                           :fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
-                                                                        {:diagnostics {:globals [:vim]}}]}}
+                           ; :fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
+                           ;                                              {:diagnostics {:globals [:vim]}}]}}
+                           :rust-analyzer {}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})
                    ((. (require :mason) :setup))
                    (local ensure-installed (vim.tbl_keys (or servers {})))
                    (vim.list_extend ensure-installed [:stylua])
+                   (local vue-language-server-path
+                          (.. (vim.fn.expand :$MASON/packages)
+                              :/vue-language-server
+                              "/node_modules/@vue/language-server"))
+                   (local tsserver-filetypes
+                          [:typescript
+                           :javascript
+                           :javascriptreact
+                           :typescriptreact
+                           :vue])
+                   (local vue-plugin
+                          {:configNamespace :typescript
+                           :languages [:vue]
+                           :location vue-language-server-path
+                           :name "@vue/typescript-plugin"})
+                   (local vtsls-config
+                          {:filetypes tsserver-filetypes
+                           :settings {:vtsls {:tsserver {:globalPlugins [vue-plugin]}}}})
+                   (local ts-ls-config
+                          {:filetypes tsserver-filetypes
+                           :init_options {:plugins [vue-plugin]}})
+                   (local vue-ls-config {})
+                   (vim.lsp.config :vtsls vtsls-config)
+                   (vim.lsp.config :vue_ls vue-ls-config)
+                   (vim.lsp.config :ts_ls ts-ls-config)
+                   (vim.lsp.enable [:vtsls :vue_ls])
                    ((. (require :mason-tool-installer) :setup) {:ensure_installed ensure-installed})
                    ((. (require :mason-lspconfig) :setup) {:handlers [(fn [server-name]
                                                                         (local server
