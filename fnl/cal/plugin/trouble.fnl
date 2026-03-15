@@ -18,4 +18,4 @@
                                     {1 :<leader>xQ
                                      2 "<cmd>Trouble qflist toggle<cr>"
                                      :desc "Quickfix List (Trouble)"}]
-                             :opts {}})]
+                             :opts {:auto_preview false :focus true}})]

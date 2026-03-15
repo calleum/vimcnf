@@ -3,12 +3,6 @@
 [(uu.tx :mfussenegger/nvim-dap
         {:config (fn []
                    (local dap (require :dap))
-                   (set dap.configurations.java
-                        [{:hostName :127.0.0.1
-                          :name "Debug (Attach) - Remote"
-                          :port 8777
-                          :request :attach
-                          :type :java}])
                    (local dapui (require :dapui))
                    ((. (require :mason-nvim-dap) :setup) {:automatic_installation true
                                                           :ensure_installed {}
@@ -21,7 +15,7 @@
                                    {:desc "Debug: Step Over"})
                    (vim.keymap.set :n :<leader>su dap.step_out
                                    {:desc "Debug: Step Out"})
-                   (vim.keymap.set :n :<leader>tb dap.toggle_breakpoint
+                   (vim.keymap.set :n :<leader>db dap.toggle_breakpoint
                                    {:desc "Debug: Toggle Breakpoint"})
                    (vim.keymap.set :n :<leader>tB
                                    (fn []
@@ -48,7 +42,6 @@
                    (tset dap.listeners.before.event_exited :dapui_config
                          dapui.close))
          :lazy true
-         ; :enabled false
          :dependencies [:rcarriga/nvim-dap-ui
                         :nvim-neotest/nvim-nio
                         :williamboman/mason.nvim

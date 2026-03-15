@@ -15,7 +15,6 @@
                                    :html
                                    :lua
                                    :luadoc
-                                   :java
                                    :javascript
                                    :typescript
                                    :markdown

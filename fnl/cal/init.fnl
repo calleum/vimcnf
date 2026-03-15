@@ -1,5 +1,5 @@
 (local vim _G.vim)
-(local fun (require :cal.util.vendor.fun))
+(local uu (require :cal.util))
 
 (set vim.g.mapleader " ")
 (set vim.g.maplocalleader " ")
@@ -52,63 +52,72 @@
                 (fn []
                   (vim.fn.setreg "+" (vim.fn.expand "%:p"))))
 
+(vim.keymap.set :n :n :nzz {:noremap true :silent true})
+(vim.keymap.set :n :N :Nzz {:noremap true :silent true})
+(vim.keymap.set :n "*" :*zz {:noremap true :silent true})
+(vim.keymap.set :n "#" "#zz" {:noremap true :silent true})
+(vim.keymap.set :n :g* :g*zz {:noremap true :silent true})
+(vim.keymap.set :n "/" "/\\v" {:noremap true})
+
 (vim.api.nvim_create_autocmd :TextYankPost
                              {:callback (fn [] (vim.highlight.on_yank))
                               :desc "Highlight when yanking (copying) text"
                               :group (vim.api.nvim_create_augroup :kickstart-highlight-yank
                                                                   {:clear true})})
 
-(vim.api.nvim_create_autocmd :BufWritePre
-                             {:callback (fn []
-                                          (when (= vim.bo.filetype :java)
-                                            (vim.cmd "%s/\\s\\+$//e")))
-                              :pattern "*"})
-
-(vim.cmd "autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")
-;
-; (vim.api.nvim_create_augroup :filetypedetect {:clear true})
-; (vim.api.nvim_create_autocmd [:BufNewFile :BufRead]
-;                              {:callback (fn []
-;                                           (when (> (vim.fn.search "{{.+}}" :nw)
-;                                                    0)
-;                                             (set vim.bo.filetype :gotmpl)))
-;                               :group :filetypedetect
-;                               :pattern :*.yml})
-
 (vim.treesitter.query.add_directive :inject-go-tmpl!
                                     (fn [metadata]
                                       (tset metadata :injection.language :yaml))
                                     {})
 
-(vim.treesitter.language.register :xml :jelly)
-
 (vim.filetype.add {:pattern {".*helm/.*/.*/templates/.*%.tpl" :helm
                              ".*helm/.*/.*/templates/.*%.ya?ml" :helm
                              ".*chart/.*/templates/.*%.ya?ml" :helm
                              "helmfile.*%.ya?ml" :helm}
-                   :extension {:yml :yaml :jelly :jelly}})
+                   :extension {:yml :yaml :nft :nftables}})
 
-; (vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
-;                              {:callback (fn []
-;                                           (local filename (vim.fn.expand "%:t"))
-;                                           (when (not (filename:match "%."))
-;                                             (local lines
-;                                                    (vim.api.nvim_buf_get_lines 0
-;                                                                                0
-;                                                                                1
-;                                                                                false))
-;                                             (each [_ line (ipairs lines)]
-;                                               (local trimmed-line
-;                                                      (line:match "^%s*(.-)%s*$"))
-;                                               (when (or (= (trimmed-line:sub 1
-;                                                                              10)
-;                                                            "pipeline {")
-;                                                         (= (trimmed-line:sub 1
-;                                                                              9)
-;                                                            "@Library("))
-;                                                 (set vim.bo.filetype :groovy)
-;                                                 (lua :break)))))
-;                               :pattern "*"})
+(vim.api.nvim_create_autocmd :FileType
+                             {:pattern :gitcommit
+                              :callback (fn []
+                                          (set vim.opt_local.spell true)
+                                          (set vim.opt_local.textwidth 72)
+                                          (set vim.opt_local.colorcolumn :73))})
+
+(vim.api.nvim_create_autocmd :FileType
+                             {:pattern :tex
+                              :callback (fn []
+                                          (set vim.opt_local.spell true)
+                                          (set vim.opt_local.textwidth 80)
+                                          (set vim.opt_local.colorcolumn :81))})
+
+(vim.api.nvim_create_autocmd :FileType
+                             {:pattern :text
+                              :callback (fn []
+                                          (set vim.opt_local.spell true)
+                                          (set vim.opt_local.textwidth 90)
+                                          (set vim.opt_local.colorcolumn :90))})
+
+(vim.api.nvim_create_autocmd :FileType
+                             {:pattern :markdown
+                              :callback (fn []
+                                          (set vim.opt_local.spell true)
+                                          (set vim.opt_local.textwidth 90)
+                                          (set vim.opt_local.colorcolumn :90))})
+
+(vim.api.nvim_create_autocmd [:BufRead :BufNewFile]
+                             {:pattern :/tmp/mutt*
+                              :callback (fn []
+                                          (set vim.bo.filetype :mail))})
+
+(vim.api.nvim_create_autocmd :FileType
+                             {:pattern :mail
+                              :callback (fn []
+                                          (set vim.opt_local.spell true)
+                                          (set vim.opt_local.textwidth 72)
+                                          (set vim.opt_local.colorcolumn :73)
+                                          (set vim.opt_local.formatoptions
+                                               (.. vim.opt_local.formatoptions._value
+                                                   :w)))})
 
 (local lazypath (.. (vim.fn.stdpath :data) :/lazy/lazy.nvim))
 (when (not (vim.loop.fs_stat lazypath))
@@ -122,56 +131,34 @@
 
 (vim.opt.rtp:prepend lazypath)
 
-(fn last [xs]
-  (fun.nth (fun.length xs) xs))
-
-(fn tx [...]
-  "Slightly nicer syntax for things like defining dependencies.
-  Anything that relies on the {1 :foo :bar true} syntax can use this."
-  (let [args [...]
-        len (fun.length args)]
-    (if (= :table (type (last args)))
-        (fun.reduce (fn [acc n v]
-                      (tset acc n v)
-                      acc) (last args)
-                    (fun.zip (fun.range 1 len) (fun.take (- len 1) args)))
-        args)))
-
-((. (require :lazy) :setup) [(tx :folke/todo-comments.nvim
-                                 {; :main :todo-comments
-                                  :dependencies [:nvim-lua/plenary.nvim]
-                                  ; :event :VimEnter
-                                  :opts {}})
-                             (tx :tpope/vim-sleuth)
-                             (tx :tpope/vim-fugitive)
-                             (tx :tpope/vim-abolish)
-                             (tx :tpope/vim-surround)
-                             (tx :Olical/nfnl)
-                             ; (tx :Olical/aniseed)
-                             (tx :mrcjkb/nvim-lastplace)
-                             ; (tx :calleum/pulse)
-                             (tx :isobit/vim-caddyfile)
-                             (tx :numToStr/Comment.nvim {:opts {}})
-                             (tx :folke/tokyonight.nvim
-                                 {:init (fn []
-                                          (vim.cmd.colorscheme :tokyonight-night)
-                                          (vim.cmd.hi "Comment gui=none")
-                                          (vim.api.nvim_set_hl 0 :TermCursor
-                                                               {:bg :NONE
-                                                                :fg :NONE})
-                                          (vim.api.nvim_set_hl 0 :TermCursorNC
-                                                               {:bg :NONE
-                                                                :fg :NONE}))
-                                  :priority 1000})
-                             (tx :rcarriga/nvim-notify)
-                             (tx :mrded/nvim-lsp-notify
-                                 {:config (fn []
-                                            ((. (require :lsp-notify) :setup) {:notify (require :notify)}))})
-                             (tx :ckipp01/nvim-jenkinsfile-linter
-                                 {:ft [:jenkinsfile :groovy]})
+((. (require :lazy) :setup) [(uu.tx :folke/todo-comments.nvim
+                                    {:dependencies [:nvim-lua/plenary.nvim]
+                                     :opts {}})
+                             (uu.tx :tpope/vim-sleuth)
+                             (uu.tx :tpope/vim-fugitive)
+                             (uu.tx :tpope/vim-abolish)
+                             (uu.tx :tpope/vim-surround)
+                             (uu.tx :Olical/nfnl)
+                             (uu.tx :mrcjkb/nvim-lastplace)
+                             (uu.tx :isobit/vim-caddyfile)
+                             (uu.tx :numToStr/Comment.nvim {:opts {}})
+                             (uu.tx :folke/tokyonight.nvim
+                                    {:init (fn []
+                                             (vim.cmd.colorscheme :tokyonight-night)
+                                             (vim.cmd.hi "Comment gui=none")
+                                             (vim.api.nvim_set_hl 0 :TermCursor
+                                                                  {:bg :NONE
+                                                                   :fg :NONE})
+                                             (vim.api.nvim_set_hl 0
+                                                                  :TermCursorNC
+                                                                  {:bg :NONE
+                                                                   :fg :NONE}))
+                                     :priority 1000})
+                             (uu.tx :rcarriga/nvim-notify)
+                             (uu.tx :mrded/nvim-lsp-notify
+                                    {:config (fn []
+                                               ((. (require :lsp-notify) :setup) {:notify (require :notify)}))})
                              {:import :cal.plugin}]
                             {:dev {:path "~/src/calleum"
                                    :patterns [:calleum]
                                    :fallback true}})
-
-(vim.api.nvim_set_hl 0 "@jsni.java_call" {:link :Function})

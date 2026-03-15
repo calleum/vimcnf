@@ -1,6 +1,6 @@
 -- [nfnl] fnl/cal/init.fnl
 local vim = _G.vim
-local fun = require("cal.util.vendor.fun")
+local uu = require("cal.util")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = false
@@ -43,26 +43,63 @@ local function _1_()
   return vim.fn.setreg("+", vim.fn.expand("%:p"))
 end
 vim.keymap.set("n", "<leader>cp", _1_)
+vim.keymap.set("n", "n", "nzz", {noremap = true, silent = true})
+vim.keymap.set("n", "N", "Nzz", {noremap = true, silent = true})
+vim.keymap.set("n", "*", "*zz", {noremap = true, silent = true})
+vim.keymap.set("n", "#", "#zz", {noremap = true, silent = true})
+vim.keymap.set("n", "g*", "g*zz", {noremap = true, silent = true})
+vim.keymap.set("n", "/", "/\\v", {noremap = true})
 local function _2_()
   return vim.highlight.on_yank()
 end
 vim.api.nvim_create_autocmd("TextYankPost", {callback = _2_, desc = "Highlight when yanking (copying) text", group = vim.api.nvim_create_augroup("kickstart-highlight-yank", {clear = true})})
-local function _3_()
-  if (vim.bo.filetype == "java") then
-    return vim.cmd("%s/\\s\\+$//e")
-  else
-    return nil
-  end
-end
-vim.api.nvim_create_autocmd("BufWritePre", {callback = _3_, pattern = "*"})
-vim.cmd("autocmd BufNewFile,BufRead *.jenkinsfile set filetype=groovy")
-local function _5_(metadata)
+local function _3_(metadata)
   metadata["injection.language"] = "yaml"
   return nil
 end
-vim.treesitter.query.add_directive("inject-go-tmpl!", _5_, {})
-vim.treesitter.language.register("xml", "jelly")
-vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", jelly = "jelly"}})
+vim.treesitter.query.add_directive("inject-go-tmpl!", _3_, {})
+vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", nft = "nftables"}})
+local function _4_()
+  vim.opt_local.spell = true
+  vim.opt_local.textwidth = 72
+  vim.opt_local.colorcolumn = "73"
+  return nil
+end
+vim.api.nvim_create_autocmd("FileType", {pattern = "gitcommit", callback = _4_})
+local function _5_()
+  vim.opt_local.spell = true
+  vim.opt_local.textwidth = 80
+  vim.opt_local.colorcolumn = "81"
+  return nil
+end
+vim.api.nvim_create_autocmd("FileType", {pattern = "tex", callback = _5_})
+local function _6_()
+  vim.opt_local.spell = true
+  vim.opt_local.textwidth = 90
+  vim.opt_local.colorcolumn = "90"
+  return nil
+end
+vim.api.nvim_create_autocmd("FileType", {pattern = "text", callback = _6_})
+local function _7_()
+  vim.opt_local.spell = true
+  vim.opt_local.textwidth = 90
+  vim.opt_local.colorcolumn = "90"
+  return nil
+end
+vim.api.nvim_create_autocmd("FileType", {pattern = "markdown", callback = _7_})
+local function _8_()
+  vim.bo.filetype = "mail"
+  return nil
+end
+vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {pattern = "/tmp/mutt*", callback = _8_})
+local function _9_()
+  vim.opt_local.spell = true
+  vim.opt_local.textwidth = 72
+  vim.opt_local.colorcolumn = "73"
+  vim.opt_local.formatoptions = (vim.opt_local.formatoptions._value .. "w")
+  return nil
+end
+vim.api.nvim_create_autocmd("FileType", {pattern = "mail", callback = _9_})
 local lazypath = (vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
 if not vim.loop.fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -70,30 +107,13 @@ if not vim.loop.fs_stat(lazypath) then
 else
 end
 vim.opt.rtp:prepend(lazypath)
-local function last(xs)
-  return fun.nth(fun.length(xs), xs)
-end
-local function tx(...)
-  local args = {...}
-  local len = fun.length(args)
-  if ("table" == type(last(args))) then
-    local function _7_(acc, n, v)
-      acc[n] = v
-      return acc
-    end
-    return fun.reduce(_7_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
-  else
-    return args
-  end
-end
-local function _9_()
+local function _11_()
   vim.cmd.colorscheme("tokyonight-night")
   vim.cmd.hi("Comment gui=none")
   vim.api.nvim_set_hl(0, "TermCursor", {bg = "NONE", fg = "NONE"})
   return vim.api.nvim_set_hl(0, "TermCursorNC", {bg = "NONE", fg = "NONE"})
 end
-local function _10_()
+local function _12_()
   return require("lsp-notify").setup({notify = require("notify")})
 end
-require("lazy").setup({tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), tx("tpope/vim-sleuth"), tx("tpope/vim-fugitive"), tx("tpope/vim-abolish"), tx("tpope/vim-surround"), tx("Olical/nfnl"), tx("mrcjkb/nvim-lastplace"), tx("isobit/vim-caddyfile"), tx("numToStr/Comment.nvim", {opts = {}}), tx("folke/tokyonight.nvim", {init = _9_, priority = 1000}), tx("rcarriga/nvim-notify"), tx("mrded/nvim-lsp-notify", {config = _10_}), tx("ckipp01/nvim-jenkinsfile-linter", {ft = {"jenkinsfile", "groovy"}}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})
-return vim.api.nvim_set_hl(0, "@jsni.java_call", {link = "Function"})
+return require("lazy").setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("tpope/vim-surround"), uu.tx("Olical/nfnl"), uu.tx("mrcjkb/nvim-lastplace"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("folke/tokyonight.nvim", {init = _11_, priority = 1000}), uu.tx("rcarriga/nvim-notify"), uu.tx("mrded/nvim-lsp-notify", {config = _12_}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})

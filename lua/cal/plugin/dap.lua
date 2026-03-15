@@ -2,14 +2,13 @@
 local uu = require("cal.util")
 local function _1_()
   local dap = require("dap")
-  dap.configurations.java = {{hostName = "127.0.0.1", name = "Debug (Attach) - Remote", port = 8777, request = "attach", type = "java"}}
   local dapui = require("dapui")
   require("mason-nvim-dap").setup({automatic_installation = true, ensure_installed = {}, handlers = {}})
   vim.keymap.set("n", "<leader>tc", dap.continue, {desc = "Debug: Start/Continue"})
   vim.keymap.set("n", "<leader>si", dap.step_into, {desc = "Debug: Step Into"})
   vim.keymap.set("n", "<leader>so", dap.step_over, {desc = "Debug: Step Over"})
   vim.keymap.set("n", "<leader>su", dap.step_out, {desc = "Debug: Step Out"})
-  vim.keymap.set("n", "<leader>tb", dap.toggle_breakpoint, {desc = "Debug: Toggle Breakpoint"})
+  vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, {desc = "Debug: Toggle Breakpoint"})
   local function _2_()
     return dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
   end

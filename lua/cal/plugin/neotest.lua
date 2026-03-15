@@ -6,7 +6,6 @@ local function _1_()
   local function _2_()
     return require("neotest").run.run(vim.fn.expand("%"))
   end
-  vim.keymap.set("n", "<leader>ra", _2_, {desc = "[R]un [A]ll neotests in current file"})
-  return {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "antoinemadec/FixCursorHold.nvim", "nvim-treesitter/nvim-treesitter"}
+  return vim.keymap.set("n", "<leader>ra", _2_, {desc = "[R]un [A]ll neotests in current file"})
 end
-return {uu.tx("nvim-neotest/neotest-python"), uu.tx("nvim-neotest/neotest-plenary"), uu.tx("nvim-neotest/neotest", {config = _1_})}
+return {uu.tx("nvim-neotest/neotest-python"), uu.tx("nvim-neotest/neotest-plenary"), uu.tx("nvim-neotest/neotest", {config = _1_, dependencies = {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "antoinemadec/FixCursorHold.nvim", "nvim-treesitter/nvim-treesitter"}})}

@@ -9,9 +9,8 @@
                    (vim.keymap.set :n :<leader>ra
                                    (fn []
                                      ((. (require :neotest) :run :run) (vim.fn.expand "%")))
-                                   {:desc "[R]un [A]ll neotests in current file"})
-                   :dependencies
-                   [:nvim-neotest/nvim-nio
-                    :nvim-neotest/neotest-plenary
-                    :antoinemadec/FixCursorHold.nvim
-                    :nvim-treesitter/nvim-treesitter])})]
+                                   {:desc "[R]un [A]ll neotests in current file"}))
+         :dependencies [:nvim-neotest/nvim-nio
+                         :nvim-neotest/neotest-plenary
+                         :antoinemadec/FixCursorHold.nvim
+                         :nvim-treesitter/nvim-treesitter]})]

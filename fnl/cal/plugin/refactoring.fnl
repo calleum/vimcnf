@@ -14,5 +14,4 @@
                             :silent true}))
  :dependencies [:nvim-lua/plenary.nvim :nvim-treesitter/nvim-treesitter]
  :lazy false
- ; :ft [:java]
  :keys [{1 :<leader>rr :desc "Refactor: Select Refactor" :mode [:n :x]}]}

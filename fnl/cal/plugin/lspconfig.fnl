@@ -111,12 +111,6 @@
                                                                :joinCDATALines true
                                                                ; :joinContentLines true
                                                                }}}}
-                           ; :ruff {:on_attach (fn [client bufnr]
-                           ;                     (when (= client.name :ruff)
-                           ;                       (set client.server_capabilities.hoverProvider
-                           ;                            false)))}
-                           ; :fennel_language_server {:settings {:fennel [{:workspace {:library (vim.api.nvim_list_runtime_paths)}}
-                           ;                                              {:diagnostics {:globals [:vim]}}]}}
                            :rust-analyzer {}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})
                    ((. (require :mason) :setup))
@@ -169,16 +163,4 @@
                         ;        {:config (fn []
                         ;                   ((. (require :lspsaga) :setup) {}))})
                         :WhoIsSethDaniel/mason-tool-installer.nvim
-                        {1 :folke/neodev.nvim :opts {}}]})
- ; (uu.tx :ray-x/lsp_signature.nvim
- ;        {:config (fn [_ opts]
- ;                   ((. (require :lsp_signature) :setup) opts))
- ;         :event :VeryLazy
- ;         :opts {:cursorhold_update false :hint_enable false :zindex 45}})
- ; (uu.tx "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
- ;        {:branch :main
- ;         :config (fn []
- ;                   ((. (require :lsp_lines) :setup) {}))
- ;         :event :LspAttach})
- (uu.tx :folke/trouble.nvim
-        {:cmd :Trouble :lazy true :opts {:auto_preview false :focus true}})]
+                        {1 :folke/neodev.nvim :opts {}}]})]

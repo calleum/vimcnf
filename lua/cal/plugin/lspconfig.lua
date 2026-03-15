@@ -2,7 +2,6 @@
 local vim = _G.vim
 local uu = require("cal.util")
 local function _1_()
-  -- ERROR level only — default TRACE produces gigabyte logs.
   vim.lsp.set_log_level("ERROR")
   local function _2_(event)
     local function map(keys, func, desc)
@@ -73,4 +72,4 @@ local function _1_()
   end
   return require("mason-lspconfig").setup({handlers = {_9_}})
 end
-return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}}), uu.tx("folke/trouble.nvim", {cmd = "Trouble", lazy = true, opts = {focus = true, auto_preview = false}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}})}
