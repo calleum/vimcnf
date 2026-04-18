@@ -16,8 +16,6 @@ local function _1_()
     end
     map("gr", _4_, "[G]oto [R]eferences")
     map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-    map("<leader>lC", "<Cmd>Lspsaga outgoing_calls<CR>", "[l]oad outgoing [C]alls")
-    map("<leader>lc", "<Cmd>Lspsaga incoming_calls<CR>", "[l]oad incoming [c]alls")
     map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
     map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
     map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
@@ -47,9 +45,8 @@ local function _1_()
     end
   end
   vim.api.nvim_create_autocmd("LspAttach", {callback = _2_, group = vim.api.nvim_create_augroup("kickstart-lsp-attach", {clear = true})})
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
-  local servers = {fish_lsp = {}, basedpyright = {}, lemminx = {settings = {xml = {format = {joinCDATALines = true, enabled = false, splitAttributes = false}}}}, ["rust-analyzer"] = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
+  local capabilities = require("blink.cmp").get_lsp_capabilities()
+  local servers = {fish_lsp = {}, basedpyright = {}, ["fennel-language-server"] = {}, lemminx = {settings = {xml = {format = {joinCDATALines = true, enabled = false, splitAttributes = false}}}}, ["rust-analyzer"] = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
   require("mason").setup()
   local ensure_installed = vim.tbl_keys((servers or {}))
   vim.list_extend(ensure_installed, {"stylua"})
@@ -71,4 +68,4 @@ local function _1_()
   end
   return require("mason-lspconfig").setup({handlers = {_9_}})
 end
-return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/neodev.nvim", opts = {}}}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/lazydev.nvim", opts = {}}, "saghen/blink.cmp"}})}

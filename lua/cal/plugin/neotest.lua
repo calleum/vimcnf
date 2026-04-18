@@ -8,4 +8,4 @@ local function _1_()
   end
   return vim.keymap.set("n", "<leader>ra", _2_, {desc = "[R]un [A]ll neotests in current file"})
 end
-return {uu.tx("nvim-neotest/neotest-python"), uu.tx("nvim-neotest/neotest-plenary"), uu.tx("nvim-neotest/neotest", {config = _1_, dependencies = {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "antoinemadec/FixCursorHold.nvim", "nvim-treesitter/nvim-treesitter"}})}
+return {uu.tx("nvim-neotest/neotest-python"), uu.tx("nvim-neotest/neotest-plenary"), uu.tx("nvim-neotest/neotest", {config = _1_, dependencies = {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "nvim-treesitter/nvim-treesitter"}})}

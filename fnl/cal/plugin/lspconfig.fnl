@@ -94,6 +94,7 @@
                    (local servers
                           {:fish_lsp {}
                            :basedpyright {}
+                           :fennel-language-server {}
                            :lemminx {:settings {:xml {:format {:enabled false
                                                                :splitAttributes false
                                                                :joinCDATALines true}}}}

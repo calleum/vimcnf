@@ -14,7 +14,6 @@
                                                 :auto_insert (fn [ctx] (not= ctx.mode :cmdline))}}
                              :menu {:auto_show true}
                              :ghost_text {:enabled true}}
-                :appearance {:use_nvim_get_hl true
-                             :nerd_font_variant :mono}
+                :appearance {:nerd_font_variant :mono}
                 :sources {:default [:lsp :path :snippets :buffer]}}
          :dependencies [:rafamadriz/friendly-snippets]})]
