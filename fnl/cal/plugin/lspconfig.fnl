@@ -1,5 +1,7 @@
 (local uu (require :cal.util))
 
+(vim.lsp.set_log_level :info)
+
 (fn set-lsp-keymaps [bufnr]
   "Defines buffer-local keybindings for the attached LSP."
   (let [builtin (require :telescope.builtin)
@@ -70,7 +72,12 @@
 ;; --- Server & Mason Configuration ---
 
 (fn get-server-config []
-  (let [mason {:fish_lsp {}
+  (let [library (vim.api.nvim_list_runtime_paths)
+        ;; Add lazydev types to the library if they exist
+        lazydev-path (.. (vim.fn.stdpath :data) :/lazy/lazydev.nvim/lua)
+        _ (when (= (vim.fn.isdirectory lazydev-path) 1)
+            (table.insert library lazydev-path))
+        mason {:fish_lsp {}
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
         system {:rust-analyzer {}
@@ -78,8 +85,9 @@
                                                        :util :root_pattern) :.nfnl.fnl
                                                                             :fnl
                                                                             :.git)
-                                         :settings {:fennel {:diagnostics {:globals [:vim]}
-                                                             :workspace {:library (vim.api.nvim_list_runtime_paths)}}}}}]
+                                         :settings {:fennel {:diagnostics {:globals [:vim]
+                                                                           :extra_globals [:vim]}
+                                                             :workspace {: library}}}}}]
     {: mason : system :all (vim.tbl_deep_extend :force mason system)}))
 
 (fn setup-vtsls []
@@ -110,23 +118,24 @@
                    (setup-lsp-attach-autocmd)
                    (let [capabilities ((. (require :blink.cmp)
                                           :get_lsp_capabilities))
-                         {: mason :all all-servers} (get-server-config)
+                         {: mason : system :all all-servers} (get-server-config)
                          extra-names (setup-vtsls)]
                      (setup-mason mason)
-                     ((. (require :mason-lspconfig) :setup) {:handlers [(fn [name]
-                                                                          (let [opts (or (. all-servers
-                                                                                            name)
-                                                                                         {})]
-                                                                            (set opts.capabilities
-                                                                                 (vim.tbl_deep_extend :force
-                                                                                                      (or opts.capabilities
-                                                                                                          {})
-                                                                                                      capabilities))
-                                                                            (vim.notify (.. "LSP Setup: "
-                                                                                            name))
-                                                                            ((. (. (require :lspconfig)
-                                                                                   name)
-                                                                                :setup) opts)))]})
+
+                     (fn setup-server [name]
+                       (let [opts (or (. all-servers name) {})]
+                         (set opts.capabilities
+                              (vim.tbl_deep_extend :force
+                                                   (or opts.capabilities {})
+                                                   capabilities))
+                         (vim.notify (.. "LSP Setup: " name))
+                         ((. (. (require :lspconfig) name) :setup) opts)))
+
+                     ;; Setup handlers for Mason-managed servers
+                     ((. (require :mason-lspconfig) :setup) {:handlers [setup-server]})
+                     ;; Setup system-managed servers
+                     (each [name _ (pairs system)]
+                       (setup-server name))
                      (let [to-enable (vim.tbl_keys all-servers)]
                        (vim.list_extend to-enable extra-names)
                        (vim.lsp.enable to-enable))))
