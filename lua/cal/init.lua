@@ -4,6 +4,8 @@ local uu = require("cal.util")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = false
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
 vim.opt.number = true
 vim.opt.mouse = "a"
 vim.opt.showmode = false
@@ -53,7 +55,7 @@ local function _2_()
   return vim.highlight.on_yank()
 end
 vim.api.nvim_create_autocmd("TextYankPost", {callback = _2_, desc = "Highlight when yanking (copying) text", group = vim.api.nvim_create_augroup("kickstart-highlight-yank", {clear = true})})
-local function _3_(metadata)
+local function _3_(_, _0, _1, _2, metadata)
   metadata["injection.language"] = "yaml"
   return nil
 end
@@ -116,4 +118,4 @@ end
 local function _12_()
   return require("lsp-notify").setup({notify = require("notify")})
 end
-return require("lazy").setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("tpope/vim-surround"), uu.tx("Olical/nfnl"), uu.tx("mrcjkb/nvim-lastplace"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("folke/tokyonight.nvim", {init = _11_, priority = 1000}), uu.tx("rcarriga/nvim-notify"), uu.tx("mrded/nvim-lsp-notify", {config = _12_}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}})
+return require("lazy").setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("tpope/vim-surround"), uu.tx("Olical/nfnl"), uu.tx("mrcjkb/nvim-lastplace"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("folke/tokyonight.nvim", {init = _11_, priority = 1000}), uu.tx("rcarriga/nvim-notify"), uu.tx("mrded/nvim-lsp-notify", {config = _12_}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})

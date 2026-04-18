@@ -2,8 +2,6 @@
 (local uu (require :cal.util))
 [(uu.tx :neovim/nvim-lspconfig
         {:config (fn []
-                   ; ERROR level only — default TRACE produces gigabyte logs.
-                   (vim.lsp.set_log_level :ERROR)
                    (vim.api.nvim_create_autocmd :LspAttach
                                                 {:callback (fn [event]
                                                              (fn map [keys
@@ -34,12 +32,6 @@
                                                                   (. (require :telescope.builtin)
                                                                      :lsp_implementations)
                                                                   "[G]oto [I]mplementation")
-                                                             (map :<leader>lC
-                                                                  "<Cmd>Lspsaga outgoing_calls<CR>"
-                                                                  "[l]oad outgoing [C]alls")
-                                                             (map :<leader>lc
-                                                                  "<Cmd>Lspsaga incoming_calls<CR>"
-                                                                  "[l]oad incoming [c]alls")
                                                              (map :<leader>D
                                                                   (. (require :telescope.builtin)
                                                                      :lsp_type_definitions)
@@ -97,20 +89,14 @@
                                                                     "[T]oggle Inlay [H]ints")))
                                                  :group (vim.api.nvim_create_augroup :kickstart-lsp-attach
                                                                                      {:clear true})})
-                   (var capabilities
-                        (vim.lsp.protocol.make_client_capabilities))
-                   (set capabilities
-                        (vim.tbl_deep_extend :force capabilities
-                                             ((. (require :cmp_nvim_lsp)
-                                                 :default_capabilities))))
+                   (local capabilities
+                          ((. (require :blink.cmp) :get_lsp_capabilities)))
                    (local servers
                           {:fish_lsp {}
                            :basedpyright {}
                            :lemminx {:settings {:xml {:format {:enabled false
                                                                :splitAttributes false
-                                                               :joinCDATALines true
-                                                               ; :joinContentLines true
-                                                               }}}}
+                                                               :joinCDATALines true}}}}
                            :rust-analyzer {}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})
                    ((. (require :mason) :setup))
@@ -159,8 +145,6 @@
                                                                             :setup) server))]}))
          :dependencies [{1 :williamboman/mason.nvim :config true}
                         :williamboman/mason-lspconfig.nvim
-                        ; (uu.tx :nvimdev/lspsaga.nvim
-                        ;        {:config (fn []
-                        ;                   ((. (require :lspsaga) :setup) {}))})
                         :WhoIsSethDaniel/mason-tool-installer.nvim
-                        {1 :folke/neodev.nvim :opts {}}]})]
+                        {1 :folke/lazydev.nvim :opts {}}
+                        :saghen/blink.cmp]})]

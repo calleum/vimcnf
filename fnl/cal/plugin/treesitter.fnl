@@ -1,14 +1,26 @@
 (local uu (require :cal.util))
 
 [(uu.tx :nvim-treesitter/nvim-treesitter
-        {:build ":TSUpdate"
-         :dependencies [:nvim-treesitter/nvim-treesitter-refactor]
+        {:branch :main
+         :build ":TSUpdate"
          :config (fn [_ opts]
                    (tset (require :nvim-treesitter.install) :prefer_git true)
-                   ((. (require :nvim-treesitter.configs) :setup) opts))
+                   (let [ts (require :nvim-treesitter)]
+                     (ts.setup opts)
+                     (when opts.ensure_installed
+                       (ts.install opts.ensure_installed))
+
+                     ;; Enable highlighting and indent for all installed parsers
+                     ;; This is the modern way to enable these features in the main branch
+                     (vim.api.nvim_create_autocmd :FileType
+                                                  {:callback (fn [args]
+                                                               (local bufnr args.buf)
+                                                               (local ft (vim.api.nvim_get_option_value :filetype {:buf bufnr}))
+                                                               (local lang (vim.treesitter.language.get_lang ft))
+                                                               (when (and lang (pcall vim.treesitter.start bufnr lang))
+                                                                 (set vim.bo.indentexpr "v:lua.require'nvim-treesitter'.indentexpr()")))
+                                                   :group (vim.api.nvim_create_augroup :treesitter-setup {:clear true})})))
          :opts {:auto_install true
-                :refactor {:smart_rename {:enable true
-                                          :keymaps {:smart_rename :grr}}}
                 :ensure_installed [:bash
                                    :c
                                    :diff
@@ -17,13 +29,12 @@
                                    :luadoc
                                    :javascript
                                    :typescript
-                                   :markdown
                                    :vim
-                                   :vimdoc]
-                :highlight {:additional_vim_regex_highlighting [:ruby]
-                            :enable true}
-                :indent {:disable [:ruby] :enable true}}})
- (uu.tx :nvim-treesitter/nvim-treesitter-textobjects
-        {:dependencies [:nvim-treesitter/nvim-treesitter]})
- (uu.tx :nvim-treesitter/nvim-treesitter-context
-        {:dependencies [:nvim-treesitter/nvim-treesitter]})]
+                                   :vimdoc]}})
+  (uu.tx :nvim-treesitter/nvim-treesitter-context
+         {
+          :config (fn [_ opts]
+                    ((. (require :treesitter-context) :setup) opts))
+          :opts {:exclude_ftypes [:markdown]
+                 :on_attach (fn [buf]
+                              (not= (. vim.bo buf :filetype) :markdown))}})]

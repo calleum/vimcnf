@@ -36,4 +36,4 @@ end
 local function _6_()
   return (vim.fn.executable("make") == 1)
 end
-return {uu.tx("nvim-telescope/telescope.nvim", {branch = "0.1.x", config = _1_, dependencies = {"nvim-lua/plenary.nvim", uu.tx("nvim-telescope/telescope-dap.nvim", {lazy = true}), {"nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = _6_}, {"nvim-telescope/telescope-ui-select.nvim"}, {"nvim-tree/nvim-web-devicons"}}, event = "VimEnter"})}
+return {uu.tx("nvim-telescope/telescope.nvim", {branch = "master", config = _1_, dependencies = {"nvim-lua/plenary.nvim", uu.tx("nvim-telescope/telescope-dap.nvim", {lazy = true}), {"nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = _6_}, {"nvim-telescope/telescope-ui-select.nvim"}, {"nvim-tree/nvim-web-devicons"}}, event = "VimEnter"})}

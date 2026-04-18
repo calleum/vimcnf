@@ -4,6 +4,11 @@
 (set vim.g.mapleader " ")
 (set vim.g.maplocalleader " ")
 (set vim.g.have_nerd_font false)
+
+;; Disable unused providers
+(set vim.g.loaded_perl_provider 0)
+(set vim.g.loaded_ruby_provider 0)
+
 (set vim.opt.number true)
 (set vim.opt.mouse :a)
 (set vim.opt.showmode false)
@@ -66,7 +71,7 @@
                                                                   {:clear true})})
 
 (vim.treesitter.query.add_directive :inject-go-tmpl!
-                                    (fn [metadata]
+                                    (fn [_ _ _ _ metadata]
                                       (tset metadata :injection.language :yaml))
                                     {})
 
@@ -137,9 +142,7 @@
                              (uu.tx :tpope/vim-sleuth)
                              (uu.tx :tpope/vim-fugitive)
                              (uu.tx :tpope/vim-abolish)
-                             (uu.tx :tpope/vim-surround)
                              (uu.tx :Olical/nfnl)
-                             (uu.tx :mrcjkb/nvim-lastplace)
                              (uu.tx :isobit/vim-caddyfile)
                              (uu.tx :numToStr/Comment.nvim {:opts {}})
                              (uu.tx :folke/tokyonight.nvim
@@ -154,11 +157,8 @@
                                                                   {:bg :NONE
                                                                    :fg :NONE}))
                                      :priority 1000})
-                             (uu.tx :rcarriga/nvim-notify)
-                             (uu.tx :mrded/nvim-lsp-notify
-                                    {:config (fn []
-                                               ((. (require :lsp-notify) :setup) {:notify (require :notify)}))})
                              {:import :cal.plugin}]
                             {:dev {:path "~/src/calleum"
                                    :patterns [:calleum]
-                                   :fallback true}})
+                                   :fallback true}
+                             :rocks {:enabled false}})

@@ -2,7 +2,6 @@
 local vim = _G.vim
 local uu = require("cal.util")
 local function _1_()
-  vim.lsp.set_log_level("ERROR")
   local function _2_(event)
     local function map(keys, func, desc)
       return vim.keymap.set("n", keys, func, {buffer = event.buf, desc = ("LSP: " .. desc)})

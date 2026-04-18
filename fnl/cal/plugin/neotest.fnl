@@ -12,5 +12,4 @@
                                    {:desc "[R]un [A]ll neotests in current file"}))
          :dependencies [:nvim-neotest/nvim-nio
                          :nvim-neotest/neotest-plenary
-                         :antoinemadec/FixCursorHold.nvim
                          :nvim-treesitter/nvim-treesitter]})]

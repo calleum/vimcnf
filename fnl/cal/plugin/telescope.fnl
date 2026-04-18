@@ -1,7 +1,7 @@
 (local uu (require :cal.util))
 
 [(uu.tx :nvim-telescope/telescope.nvim
-        {:branch :0.1.x
+        {:branch :master
          :config (fn []
                    ((. (require :telescope) :setup) {:extensions {:ui-select [((. (require :telescope.themes)
                                                                                   :get_dropdown) {:layout_config {:width 0.9}})]}})
