@@ -15,7 +15,6 @@
                              :menu {:auto_show true}
                              :ghost_text {:enabled true}}
                 :appearance {:use_nvim_get_hl true
-                             :nerd_font_variants {:mono :NerdFontMono
-                                                  :normal :NerdFont}}
+                             :nerd_font_variant :mono}
                 :sources {:default [:lsp :path :snippets :buffer]}}
          :dependencies [:rafamadriz/friendly-snippets]})]
