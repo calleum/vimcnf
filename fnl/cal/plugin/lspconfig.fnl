@@ -130,8 +130,8 @@
                      (let [to-enable (vim.tbl_keys all-servers)]
                        (vim.list_extend to-enable extra-names)
                        (vim.lsp.enable to-enable))))
-         :dependencies [{1 :williamboman/mason.nvim :config true}
+         :dependencies [(uu.tx :williamboman/mason.nvim {:config true})
                         :williamboman/mason-lspconfig.nvim
                         :WhoIsSethDaniel/mason-tool-installer.nvim
-                        {1 :folke/lazydev.nvim :opts {}}
+                        (uu.tx :folke/lazydev.nvim {:opts {}})
                         :saghen/blink.cmp]})]
