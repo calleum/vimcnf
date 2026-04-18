@@ -45,27 +45,50 @@ local function _1_()
     end
   end
   vim.api.nvim_create_autocmd("LspAttach", {callback = _2_, group = vim.api.nvim_create_augroup("kickstart-lsp-attach", {clear = true})})
-  local capabilities = require("blink.cmp").get_lsp_capabilities()
-  local servers = {fish_lsp = {}, basedpyright = {}, ["fennel-language-server"] = {}, lemminx = {settings = {xml = {format = {joinCDATALines = true, enabled = false, splitAttributes = false}}}}, ["rust-analyzer"] = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
-  require("mason").setup()
-  local ensure_installed = vim.tbl_keys((servers or {}))
+  local blink = require("blink.cmp")
+  local capabilities = blink.get_lsp_capabilities()
+  local mason_servers = {fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
+  local system_servers = {["rust-analyzer"] = {}, fennel_language_server = {}}
+  local servers = vim.tbl_deep_extend("force", mason_servers, system_servers)
+  local ensure_installed = vim.tbl_keys(mason_servers)
   vim.list_extend(ensure_installed, {"stylua"})
-  local vue_language_server_path = (vim.fn.expand("$MASON/packages") .. "/vue-language-server" .. "/node_modules/@vue/language-server")
+  local mason_path = vim.fn.expand("$MASON/packages")
+  local vue_language_server_path = (mason_path .. "/vue-language-server/node_modules/@vue/language-server")
+  local vue_plugin = {name = "@vue/typescript-plugin", location = vue_language_server_path, languages = {"vue"}, configNamespace = "typescript"}
   local tsserver_filetypes = {"typescript", "javascript", "javascriptreact", "typescriptreact", "vue"}
-  local vue_plugin = {configNamespace = "typescript", languages = {"vue"}, location = vue_language_server_path, name = "@vue/typescript-plugin"}
   local vtsls_config = {filetypes = tsserver_filetypes, settings = {vtsls = {tsserver = {globalPlugins = {vue_plugin}}}}}
-  local ts_ls_config = {filetypes = tsserver_filetypes, init_options = {plugins = {vue_plugin}}}
   local vue_ls_config = {}
   vim.lsp.config("vtsls", vtsls_config)
   vim.lsp.config("vue_ls", vue_ls_config)
-  vim.lsp.config("ts_ls", ts_ls_config)
-  vim.lsp.enable({"vtsls", "vue_ls"})
-  require("mason-tool-installer").setup({ensure_installed = ensure_installed})
-  local function _9_(server_name)
-    local server = (servers[server_name] or {})
-    server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, (server.capabilities or {}))
-    return require("lspconfig")[server_name].setup(server)
+  local function view(list)
+    local _9_
+    do
+      local tbl_26_ = {}
+      local i_27_ = 0
+      for _, val in ipairs(list) do
+        local val_28_ = ("[" .. val .. "]")
+        if (nil ~= val_28_) then
+          i_27_ = (i_27_ + 1)
+          tbl_26_[i_27_] = val_28_
+        else
+        end
+      end
+      _9_ = tbl_26_
+    end
+    return table.concat(_9_, " | ")
   end
-  return require("mason-lspconfig").setup({handlers = {_9_}})
+  require("mason").setup()
+  require("mason-tool-installer").setup({ensure_installed = ensure_installed})
+  local function _11_(server_name)
+    local server_opts = (servers[server_name] or {})
+    server_opts.capabilities = vim.tbl_deep_extend("force", (server_opts.capabilities or {}), capabilities)
+    vim.notify(view(server_name))
+    return require("lspconfig")[server_name].setup(server_opts)
+  end
+  require("mason-lspconfig").setup({handlers = {_11_}})
+  local all_servers_to_enable = vim.tbl_keys(servers)
+  vim.list_extend(all_servers_to_enable, {"vtsls", "vue_ls"})
+  vim.notify(view(all_servers_to_enable))
+  return vim.lsp.enable(all_servers_to_enable)
 end
 return {uu.tx("neovim/nvim-lspconfig", {config = _1_, dependencies = {{"williamboman/mason.nvim", config = true}, "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", {"folke/lazydev.nvim", opts = {}}, "saghen/blink.cmp"}})}

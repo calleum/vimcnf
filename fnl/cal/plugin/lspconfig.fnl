@@ -89,61 +89,66 @@
                                                                     "[T]oggle Inlay [H]ints")))
                                                  :group (vim.api.nvim_create_augroup :kickstart-lsp-attach
                                                                                      {:clear true})})
-                   (local capabilities
-                          ((. (require :blink.cmp) :get_lsp_capabilities)))
-                   (local servers
+                   (local blink (require :blink.cmp))
+                   (local capabilities (blink.get_lsp_capabilities))
+                   (local mason-servers
                           {:fish_lsp {}
                            :basedpyright {}
-                           :fennel-language-server {}
-                           :lemminx {:settings {:xml {:format {:enabled false
-                                                               :splitAttributes false
-                                                               :joinCDATALines true}}}}
-                           :rust-analyzer {}
                            :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}})
-                   ((. (require :mason) :setup))
-                   (local ensure-installed (vim.tbl_keys (or servers {})))
+                   (local system-servers
+                          {:rust-analyzer {} :fennel_language_server {}})
+                   (local servers
+                          (vim.tbl_deep_extend :force mason-servers
+                                               system-servers))
+                   (local ensure-installed (vim.tbl_keys mason-servers))
                    (vim.list_extend ensure-installed [:stylua])
+                   (local mason-path (vim.fn.expand :$MASON/packages))
                    (local vue-language-server-path
-                          (.. (vim.fn.expand :$MASON/packages)
-                              :/vue-language-server
-                              "/node_modules/@vue/language-server"))
+                          (.. mason-path
+                              "/vue-language-server/node_modules/@vue/language-server"))
+                   (local vue-plugin
+                          {:name "@vue/typescript-plugin"
+                           :location vue-language-server-path
+                           :languages [:vue]
+                           :configNamespace :typescript})
                    (local tsserver-filetypes
                           [:typescript
                            :javascript
                            :javascriptreact
                            :typescriptreact
                            :vue])
-                   (local vue-plugin
-                          {:configNamespace :typescript
-                           :languages [:vue]
-                           :location vue-language-server-path
-                           :name "@vue/typescript-plugin"})
                    (local vtsls-config
                           {:filetypes tsserver-filetypes
                            :settings {:vtsls {:tsserver {:globalPlugins [vue-plugin]}}}})
-                   (local ts-ls-config
-                          {:filetypes tsserver-filetypes
-                           :init_options {:plugins [vue-plugin]}})
                    (local vue-ls-config {})
                    (vim.lsp.config :vtsls vtsls-config)
                    (vim.lsp.config :vue_ls vue-ls-config)
-                   (vim.lsp.config :ts_ls ts-ls-config)
-                   (vim.lsp.enable [:vtsls :vue_ls])
+
+                   (fn view [list]
+                     (table.concat (icollect [_ val (ipairs list)]
+                                     (.. "[" val "]"))
+                                   " | "))
+
+                   ((. (require :mason) :setup))
                    ((. (require :mason-tool-installer) :setup) {:ensure_installed ensure-installed})
                    ((. (require :mason-lspconfig) :setup) {:handlers [(fn [server-name]
-                                                                        (local server
+                                                                        (local server-opts
                                                                                (or (. servers
                                                                                       server-name)
                                                                                    {}))
-                                                                        (set server.capabilities
+                                                                        (set server-opts.capabilities
                                                                              (vim.tbl_deep_extend :force
-                                                                                                  {}
-                                                                                                  capabilities
-                                                                                                  (or server.capabilities
-                                                                                                      {})))
+                                                                                                  (or server-opts.capabilities
+                                                                                                      {})
+                                                                                                  capabilities))
+                                                                        (vim.notify (view server-name))
                                                                         ((. (. (require :lspconfig)
                                                                                server-name)
-                                                                            :setup) server))]}))
+                                                                            :setup) server-opts))]})
+                   (local all-servers-to-enable (vim.tbl_keys servers))
+                   (vim.list_extend all-servers-to-enable [:vtsls :vue_ls])
+                   (vim.notify (view all-servers-to-enable))
+                   (vim.lsp.enable all-servers-to-enable))
          :dependencies [{1 :williamboman/mason.nvim :config true}
                         :williamboman/mason-lspconfig.nvim
                         :WhoIsSethDaniel/mason-tool-installer.nvim
