@@ -35,15 +35,32 @@ local function reverse(xs)
   end
   return fun.take(fun.length(xs), fun.tabulate(_3_))
 end
+local function view(list)
+  local _4_
+  do
+    local tbl_26_ = {}
+    local i_27_ = 0
+    for _, val in ipairs(list) do
+      local val_28_ = ("[" .. val .. "]")
+      if (nil ~= val_28_) then
+        i_27_ = (i_27_ + 1)
+        tbl_26_[i_27_] = val_28_
+      else
+      end
+    end
+    _4_ = tbl_26_
+  end
+  return table.concat(_4_, " | ")
+end
 local function tx(...)
   local args = {...}
   local len = fun.length(args)
   if ("table" == type(last(args))) then
-    local function _4_(acc, n, v)
+    local function _6_(acc, n, v)
       acc[n] = v
       return acc
     end
-    return fun.reduce(_4_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
+    return fun.reduce(_6_, last(args), fun.zip(fun.range(1, len), fun.take((len - 1), args)))
   else
     return args
   end
@@ -58,4 +75,4 @@ local function extend_or_override(config, custom, ...)
   end
   return new_config
 end
-return {tx = tx, last = last, reverse = reverse, ["extend-or-override"] = extend_or_override, ["pretty-print-table"] = pretty_print_table}
+return {tx = tx, last = last, reverse = reverse, ["extend-or-override"] = extend_or_override, ["pretty-print-table"] = pretty_print_table, view = view}

@@ -1,11 +1,9 @@
 -- [nfnl] fnl/cal/plugin/neotest.fnl
-local vim = _G.vim
 local uu = require("cal.util")
-local function _1_()
-  require("neotest").setup({adapters = {require("neotest-python")({dap = {justMyCode = false}}), require("neotest-plenary")}})
-  local function _2_()
-    return require("neotest").run.run(vim.fn.expand("%"))
-  end
-  return vim.keymap.set("n", "<leader>ra", _2_, {desc = "[R]un [A]ll neotests in current file"})
+local function run_all_tests()
+  return require("neotest").run.run(vim.fn.expand("%"))
 end
-return {uu.tx("nvim-neotest/neotest-python"), uu.tx("nvim-neotest/neotest-plenary"), uu.tx("nvim-neotest/neotest", {config = _1_, dependencies = {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "nvim-treesitter/nvim-treesitter"}})}
+local function _1_()
+  return require("neotest").setup({adapters = {require("neotest-python"), require("neotest-plenary")}})
+end
+return {uu.tx("nvim-neotest/neotest", {dependencies = {"nvim-neotest/nvim-nio", "nvim-neotest/neotest-plenary", "nvim-neotest/neotest-python", "nvim-treesitter/nvim-treesitter"}, keys = {uu.tx("<leader>ra", run_all_tests, {desc = "[R]un [A]ll neotests in current file"})}, config = _1_})}

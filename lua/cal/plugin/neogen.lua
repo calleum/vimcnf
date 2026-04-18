@@ -1,8 +1,9 @@
 -- [nfnl] fnl/cal/plugin/neogen.fnl
 local uu = require("cal.util")
-local function _1_()
-  require("neogen").setup({snippet_engine = "luasnip"})
-  local opts = {noremap = true, silent = true}
-  return vim.api.nvim_set_keymap("n", "<Leader>nd", ":lua require('neogen').generate()<CR>", opts)
+local function generate_doc()
+  return require("neogen").generate()
 end
-return {uu.tx("danymat/neogen", {config = _1_})}
+local function _1_()
+  return require("neogen").setup({snippet_engine = "luasnip"})
+end
+return {uu.tx("danymat/neogen", {keys = {uu.tx("<leader>nd", generate_doc, {desc = "Generate Annotation"})}, config = _1_})}

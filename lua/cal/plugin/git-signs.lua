@@ -1,52 +1,42 @@
 -- [nfnl] fnl/cal/plugin/git-signs.fnl
-local function _1_(bufnr)
-  local gitsigns = require("gitsigns")
-  local function map(mode, l, r, opts)
-    opts = (opts or {})
-    opts.buffer = bufnr
-    return vim.keymap.set(mode, l, r, opts)
-  end
-  local function _2_()
+local uu = require("cal.util")
+local function on_attach(bufnr)
+  local gs = require("gitsigns")
+  local maps
+  local function _1_()
     if vim.wo.diff then
       return vim.cmd.normal({"]c", bang = true})
     else
-      return gitsigns.nav_hunk("next")
+      return gs.nav_hunk("next")
     end
   end
-  map("n", "]c", _2_)
-  local function _4_()
+  local function _3_()
     if vim.wo.diff then
       return vim.cmd.normal({"[c", bang = true})
     else
-      return gitsigns.nav_hunk("prev")
+      return gs.nav_hunk("prev")
     end
   end
-  map("n", "[c", _4_)
-  map("n", "<leader>hs", gitsigns.stage_hunk)
-  map("n", "<leader>hr", gitsigns.reset_hunk)
+  local function _5_()
+    return gs.stage_hunk({vim.fn.line("."), vim.fn.line("v")})
+  end
   local function _6_()
-    return gitsigns.stage_hunk({vim.fn.line("."), vim.fn.line("v")})
+    return gs.reset_hunk({vim.fn.line("."), vim.fn.line("v")})
   end
-  map("v", "<leader>hs", _6_)
   local function _7_()
-    return gitsigns.reset_hunk({vim.fn.line("."), vim.fn.line("v")})
+    return gs.blame_line({full = true})
   end
-  map("v", "<leader>hr", _7_)
-  map("n", "<leader>hS", gitsigns.stage_buffer)
-  map("n", "<leader>hu", gitsigns.undo_stage_hunk)
-  map("n", "<leader>hR", gitsigns.reset_buffer)
-  map("n", "<leader>hp", gitsigns.preview_hunk)
   local function _8_()
-    return gitsigns.blame_line({full = true})
+    return gs.diffthis("~")
   end
-  map("n", "<leader>hb", _8_)
-  map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
-  map("n", "<leader>hd", gitsigns.diffthis)
-  local function _9_()
-    return gitsigns.diffthis("~")
+  maps = {{"n", "]c", _1_, "Next Hunk"}, {"n", "[c", _3_, "Prev Hunk"}, {"n", "<leader>hs", gs.stage_hunk, "Stage Hunk"}, {"n", "<leader>hr", gs.reset_hunk, "Reset Hunk"}, {"v", "<leader>hs", _5_, "Stage Hunk"}, {"v", "<leader>hr", _6_, "Reset Hunk"}, {"n", "<leader>hS", gs.stage_buffer, "Stage Buffer"}, {"n", "<leader>hu", gs.undo_stage_hunk, "Undo Stage Hunk"}, {"n", "<leader>hR", gs.reset_buffer, "Reset Buffer"}, {"n", "<leader>hp", gs.preview_hunk, "Preview Hunk"}, {"n", "<leader>hb", _7_, "Blame Line"}, {"n", "<leader>tb", gs.toggle_current_line_blame, "Toggle Line Blame"}, {"n", "<leader>hd", gs.diffthis, "Diff This"}, {"n", "<leader>hD", _8_, "Diff This ~"}, {"n", "<leader>td", gs.toggle_deleted, "Toggle Deleted"}, {{"o", "x"}, "ih", ":<C-U>Gitsigns select_hunk<CR>", "Select Hunk"}}
+  for _, _9_ in ipairs(maps) do
+    local mode = _9_[1]
+    local lhs = _9_[2]
+    local rhs = _9_[3]
+    local desc = _9_[4]
+    vim.keymap.set(mode, lhs, rhs, {buffer = bufnr, desc = desc})
   end
-  map("n", "<leader>hD", _9_)
-  map("n", "<leader>td", gitsigns.toggle_deleted)
-  return map({"o", "x"}, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+  return nil
 end
-return {"lewis6991/gitsigns.nvim", opts = {signs = {add = {text = "+"}, change = {text = "~"}, changedelete = {text = "~"}, delete = {text = "_"}, topdelete = {text = "\226\128\190"}}}, on_attach = _1_}
+return {uu.tx("lewis6991/gitsigns.nvim", {opts = {on_attach = on_attach, signs = {add = {text = "+"}, change = {text = "~"}, changedelete = {text = "~"}, delete = {text = "_"}, topdelete = {text = "\226\128\190"}}}})}

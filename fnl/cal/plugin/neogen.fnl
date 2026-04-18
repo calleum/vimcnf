@@ -1,9 +1,9 @@
 (local uu (require :cal.util))
 
+(fn generate-doc []
+  ((. (require :neogen) :generate)))
+
 [(uu.tx :danymat/neogen
-        {:config (fn []
-                   ((. (require :neogen) :setup) {:snippet_engine :luasnip})
-                   (local opts {:noremap true :silent true})
-                   (vim.api.nvim_set_keymap :n :<Leader>nd
-                                            ":lua require('neogen').generate()<CR>"
-                                            opts))})]
+        {:keys [(uu.tx :<leader>nd generate-doc {:desc "Generate Annotation"})]
+         :config (fn []
+                   ((. (require :neogen) :setup) {:snippet_engine :luasnip}))})]

@@ -1,42 +1,30 @@
-{1 :lewis6991/gitsigns.nvim
- :opts {:signs {:add {:text "+"}
-                :change {:text "~"}
-                :changedelete {:text "~"}
-                :delete {:text "_"}
-                :topdelete {:text "‾"}}}
- :on_attach (fn [bufnr]
-              (local gitsigns (require :gitsigns))
+(local uu (require :cal.util))
 
-              (fn map [mode l r opts]
-                (set-forcibly! opts (or opts {}))
-                (set opts.buffer bufnr)
-                (vim.keymap.set mode l r opts))
+(fn on-attach [bufnr]
+  (let [gs (require :gitsigns)
+        maps [[:n "]c" #(if vim.wo.diff (vim.cmd.normal {1 "]c" :bang true}) (gs.nav_hunk :next)) "Next Hunk"]
+              [:n "[c" #(if vim.wo.diff (vim.cmd.normal {1 "[c" :bang true}) (gs.nav_hunk :prev)) "Prev Hunk"]
+              [:n :<leader>hs gs.stage_hunk "Stage Hunk"]
+              [:n :<leader>hr gs.reset_hunk "Reset Hunk"]
+              [:v :<leader>hs #(gs.stage_hunk [(vim.fn.line ".") (vim.fn.line :v)]) "Stage Hunk"]
+              [:v :<leader>hr #(gs.reset_hunk [(vim.fn.line ".") (vim.fn.line :v)]) "Reset Hunk"]
+              [:n :<leader>hS gs.stage_buffer "Stage Buffer"]
+              [:n :<leader>hu gs.undo_stage_hunk "Undo Stage Hunk"]
+              [:n :<leader>hR gs.reset_buffer "Reset Buffer"]
+              [:n :<leader>hp gs.preview_hunk "Preview Hunk"]
+              [:n :<leader>hb #(gs.blame_line {:full true}) "Blame Line"]
+              [:n :<leader>tb gs.toggle_current_line_blame "Toggle Line Blame"]
+              [:n :<leader>hd gs.diffthis "Diff This"]
+              [:n :<leader>hD #(gs.diffthis "~") "Diff This ~"]
+              [:n :<leader>td gs.toggle_deleted "Toggle Deleted"]
+              [[:o :x] :ih ":<C-U>Gitsigns select_hunk<CR>" "Select Hunk"]]]
+    (each [_ [mode lhs rhs desc] (ipairs maps)]
+      (vim.keymap.set mode lhs rhs {:buffer bufnr :desc desc}))))
 
-              (map :n "]c"
-                   (fn []
-                     (if vim.wo.diff
-                         (vim.cmd.normal {1 "]c" :bang true})
-                         (gitsigns.nav_hunk :next))))
-              (map :n "[c"
-                   (fn []
-                     (if vim.wo.diff
-                         (vim.cmd.normal {1 "[c" :bang true})
-                         (gitsigns.nav_hunk :prev))))
-              (map :n :<leader>hs gitsigns.stage_hunk)
-              (map :n :<leader>hr gitsigns.reset_hunk)
-              (map :v :<leader>hs
-                   (fn []
-                     (gitsigns.stage_hunk [(vim.fn.line ".") (vim.fn.line :v)])))
-              (map :v :<leader>hr
-                   (fn []
-                     (gitsigns.reset_hunk [(vim.fn.line ".") (vim.fn.line :v)])))
-              (map :n :<leader>hS gitsigns.stage_buffer)
-              (map :n :<leader>hu gitsigns.undo_stage_hunk)
-              (map :n :<leader>hR gitsigns.reset_buffer)
-              (map :n :<leader>hp gitsigns.preview_hunk)
-              (map :n :<leader>hb (fn [] (gitsigns.blame_line {:full true})))
-              (map :n :<leader>tb gitsigns.toggle_current_line_blame)
-              (map :n :<leader>hd gitsigns.diffthis)
-              (map :n :<leader>hD (fn [] (gitsigns.diffthis "~")))
-              (map :n :<leader>td gitsigns.toggle_deleted)
-              (map [:o :x] :ih ":<C-U>Gitsigns select_hunk<CR>"))}
+[(uu.tx :lewis6991/gitsigns.nvim
+        {:opts {:on_attach on-attach
+                :signs {:add {:text "+"}
+                        :change {:text "~"}
+                        :changedelete {:text "~"}
+                        :delete {:text "_"}
+                        :topdelete {:text "‾"}}}})]

@@ -1,17 +1,14 @@
-(local vim _G.vim)
-{1 :ThePrimeagen/refactoring.nvim
- :config (fn []
-           ((. (require :refactoring) :setup) {})
-           (vim.keymap.set [:n :x] :<leader>ri
-                           (fn []
-                             ((. (require :refactoring) :refactor) "Inline Variable"))
-                           {:expr true})
-           (vim.keymap.set [:n :x] :<leader>rr
-                           (fn []
-                             ((. (require :refactoring) :select_refactor)))
-                           {:desc "Refactor: Select Refactor"
-                            :noremap true
-                            :silent true}))
- :dependencies [:nvim-lua/plenary.nvim :nvim-treesitter/nvim-treesitter]
- :lazy false
- :keys [{1 :<leader>rr :desc "Refactor: Select Refactor" :mode [:n :x]}]}
+(local uu (require :cal.util))
+
+(fn select-refactor []
+  ((. (require :refactoring) :select_refactor)))
+
+(fn inline-variable []
+  ((. (require :refactoring) :refactor) "Inline Variable"))
+
+[(uu.tx :ThePrimeagen/refactoring.nvim
+        {:lazy false
+         :dependencies [:nvim-lua/plenary.nvim :nvim-treesitter/nvim-treesitter]
+         :keys [(uu.tx :<leader>rr select-refactor {:desc "Refactor: Select Refactor" :mode [:n :x]})
+                (uu.tx :<leader>ri inline-variable {:desc "Refactor: Inline Variable" :mode [:n :x] :expr true})]
+         :config (fn [] ((. (require :refactoring) :setup) {}))})]

@@ -26,6 +26,9 @@
               (fun.tabulate (fn [n]
                               (fun.nth (- len n) xs))))))
 
+(fn view [list]
+  (table.concat (icollect [_ val (ipairs list)] (.. "[" val "]")) " | "))
+
 (fn tx [...]
   "Slightly nicer syntax for things like defining dependencies.
   Anything that relies on the {1 :foo :bar true} syntax can use this."
@@ -46,8 +49,4 @@
       (set new-config (vim.tbl_deep_extend :force config custom)))
   new-config)
 
-{: tx
- : last
- : reverse
- : extend-or-override
- : pretty-print-table}
+{: tx : last : reverse : extend-or-override : pretty-print-table : view}

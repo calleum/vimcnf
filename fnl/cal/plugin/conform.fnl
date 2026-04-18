@@ -1,12 +1,11 @@
 (local uu (require :cal.util))
 
+(fn format-buffer []
+  ((. (require :conform) :format) {:async true :lsp_format :fallback}))
+
 [(uu.tx :stevearc/conform.nvim
-        {:keys [(uu.tx :<leader>f
-                       (fn []
-                         ((. (require :conform) :format) {:async true
-                                                          :lsp_format :fallback}))
-                       :desc "[F]ormat buffer" :mode "")]
-         :lazy false
+        {:lazy false
+         :keys [(uu.tx :<leader>f format-buffer {:desc "[F]ormat buffer"})]
          :opts {:format_on_save {:lsp_format :fallback :timeout_ms 500}
                 :formatters_by_ft {:lua [:stylua]
                                    :rust [:rustfmt]
@@ -19,5 +18,3 @@
                                    :fennel [:fnlfmt]
                                    :nix [:nixfmt]
                                    :python [:black]}}})]
-
-                                   ;:markdown [:markdownlint :markdown-toc]

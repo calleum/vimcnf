@@ -1,59 +1,50 @@
 (local uu (require :cal.util))
 
+(fn setup-telescope []
+  (let [telescope (require :telescope)
+        themes (require :telescope.themes)]
+    (telescope.setup {:extensions {:ui-select [(themes.get_dropdown {:layout_config {:width 0.9}})]}})
+    (each [_ ext (ipairs [:fzf :ui-select :dap])]
+      (pcall telescope.load_extension ext))))
+
+(fn set-telescope-keymaps []
+  (let [builtin (require :telescope.builtin)
+        themes (require :telescope.themes)
+        maps [[:<leader>sh builtin.help_tags "Search Help"]
+              [:<leader>sm builtin.man_pages "Search Man Pages"]
+              [:<leader>sk builtin.keymaps "Search Keymaps"]
+              [:<leader>sf builtin.find_files "Search Files"]
+              [:<leader>sw builtin.grep_string "Search current Word"]
+              [:<leader>sg builtin.live_grep "Search by Grep"]
+              [:<leader>sd builtin.diagnostics "Search Diagnostics"]
+              [:<leader>sr builtin.resume "Search References"]
+              [:<leader>s. builtin.oldfiles "Search Recent Files (\".\" for repeat)"]
+              [:<leader><leader> builtin.buffers "[ ] Find existing buffers"]
+              [:<leader>/
+               #(builtin.current_buffer_fuzzy_find (themes.get_dropdown {:previewer false :winblend 10}))
+               "[/] Fuzzily search in current buffer"]
+              [:<leader>s/
+               #(builtin.live_grep {:grep_open_files true :prompt_title "Live Grep in Open Files"})
+               "Search [/] in Open Files"]
+              [:<leader>ss
+               #(builtin.find_files {:cwd (vim.fn.expand "~/.config/fish")})
+               "Search Fish files"]
+              [:<leader>sn
+               #(builtin.find_files {:cwd (vim.fn.stdpath :config)})
+               "Search Neovim files"]]]
+    (each [_ [lhs rhs desc] (ipairs maps)]
+      (vim.keymap.set :n lhs rhs {:desc desc}))))
+
 [(uu.tx :nvim-telescope/telescope.nvim
         {:branch :master
+         :event :VimEnter
          :config (fn []
-                   ((. (require :telescope) :setup) {:extensions {:ui-select [((. (require :telescope.themes)
-                                                                                  :get_dropdown) {:layout_config {:width 0.9}})]}})
-                   (pcall (. (require :telescope) :load_extension) :fzf)
-                   (pcall (. (require :telescope) :load_extension) :ui-select)
-                   (pcall (. (require :telescope) :load_extension) :dap)
-                   (local builtin (require :telescope.builtin))
-                   (vim.keymap.set :n :<leader>sh builtin.help_tags
-                                   {:desc "[S]earch [H]elp"})
-                   (vim.keymap.set :n :<leader>sm builtin.man_pages
-                                   {:desc "[S]earch [M]an Pages"})
-                   (vim.keymap.set :n :<leader>sk builtin.keymaps
-                                   {:desc "[S]earch [K]eymaps"})
-                   (vim.keymap.set :n :<leader>sf builtin.find_files
-                                   {:desc "[S]earch [F]iles"})
-                   (vim.keymap.set :n :<leader>sw builtin.grep_string
-                                   {:desc "[S]earch current [W]ord"})
-                   (vim.keymap.set :n :<leader>sg builtin.live_grep
-                                   {:desc "[S]earch by [G]rep"})
-                   (vim.keymap.set :n :<leader>sd builtin.diagnostics
-                                   {:desc "[S]earch [D]iagnostics"})
-                   (vim.keymap.set :n :<leader>sr builtin.resume
-                                   {:desc "[S]earch [L]references"})
-                   (vim.keymap.set :n :<leader>s. builtin.oldfiles
-                                   {:desc "[S]earch Recent Files (\".\" for repeat)"})
-                   (vim.keymap.set :n :<leader><leader> builtin.buffers
-                                   {:desc "[ ] Find existing buffers"})
-                   (vim.keymap.set :n :<leader>/
-                                   (fn []
-                                     (builtin.current_buffer_fuzzy_find ((. (require :telescope.themes)
-                                                                            :get_dropdown) {:previewer false
-                                                                                            :winblend 10})))
-                                   {:desc "[/] Fuzzily search in current buffer"})
-                   (vim.keymap.set :n :<leader>s/
-                                   (fn []
-                                     (builtin.live_grep {:grep_open_files true
-                                                         :prompt_title "Live Grep in Open Files"}))
-                                   {:desc "[S]earch [/] in Open Files"})
-                   (vim.keymap.set :n :<leader>ss
-                                   (fn []
-                                     (builtin.find_files {:cwd (vim.fn.expand "~/.config/fish")}))
-                                   {:desc "[S]earch [F]ish files"})
-                   (vim.keymap.set :n :<leader>sn
-                                   (fn []
-                                     (builtin.find_files {:cwd (vim.fn.stdpath :config)}))
-                                   {:desc "[S]earch [N]eovim files"}))
+                   (setup-telescope)
+                   (set-telescope-keymaps))
          :dependencies [:nvim-lua/plenary.nvim
                         (uu.tx :nvim-telescope/telescope-dap.nvim {:lazy true})
-                        {1 :nvim-telescope/telescope-fzf-native.nvim
-                         :build :make
-                         :cond (fn []
-                                 (= (vim.fn.executable :make) 1))}
-                        [:nvim-telescope/telescope-ui-select.nvim]
-                        {1 :nvim-tree/nvim-web-devicons}]
-         :event :VimEnter})]
+                        (uu.tx :nvim-telescope/telescope-fzf-native.nvim
+                               {:build :make
+                                :cond #(= (vim.fn.executable :make) 1)})
+                        (uu.tx :nvim-telescope/telescope-ui-select.nvim)
+                        :nvim-tree/nvim-web-devicons]})]

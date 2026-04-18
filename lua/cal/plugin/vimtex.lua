@@ -1,11 +1,6 @@
 -- [nfnl] fnl/cal/plugin/vimtex.fnl
-local vim = _G.vim
 local uu = require("cal.util")
-local function a()
-  local function _1_()
-    return vim.cmd("VimtexCompile")
-  end
-  vim.keymap.set("n", "<leader>ll", _1_)
+local function setup_vimtex()
   vim.g.vimtex_imaps_enabled = 0
   vim.g.tex_flavor = "latex"
   vim.g.vimtex_enabled = 1
@@ -23,4 +18,7 @@ local function a()
     return nil
   end
 end
-return {uu.tx("lervag/vimtex", {ft = "tex", config = a})}
+local function vimtex_compile()
+  return vim.cmd("VimtexCompile")
+end
+return {uu.tx("lervag/vimtex", {ft = "tex", keys = {uu.tx("<leader>ll", vimtex_compile, {desc = "Vimtex Compile"})}, config = setup_vimtex})}

@@ -1,15 +1,8 @@
 -- [nfnl] fnl/cal/plugin/treesitter.fnl
 local uu = require("cal.util")
-local function _1_(_, opts)
-  require("nvim-treesitter.install")["prefer_git"] = true
-  local ts = require("nvim-treesitter")
-  ts.setup(opts)
-  if opts.ensure_installed then
-    ts.install(opts.ensure_installed)
-  else
-  end
-  local function _3_(args)
-    local bufnr = args.buf
+local function setup_treesitter_highlights()
+  local function _2_(_1_)
+    local bufnr = _1_.buf
     local ft = vim.api.nvim_get_option_value("filetype", {buf = bufnr})
     local lang = vim.treesitter.language.get_lang(ft)
     if (lang and pcall(vim.treesitter.start, bufnr, lang)) then
@@ -19,12 +12,19 @@ local function _1_(_, opts)
       return nil
     end
   end
-  return vim.api.nvim_create_autocmd("FileType", {callback = _3_, group = vim.api.nvim_create_augroup("treesitter-setup", {clear = true})})
+  return vim.api.nvim_create_autocmd("FileType", {callback = _2_, group = vim.api.nvim_create_augroup("treesitter-setup", {clear = true})})
 end
-local function _5_(_, opts)
-  return require("treesitter-context").setup(opts)
+local function _4_(_, opts)
+  require("nvim-treesitter.install")["prefer_git"] = true
+  local ts = require("nvim-treesitter")
+  ts.setup(opts)
+  if opts.ensure_installed then
+    ts.install(opts.ensure_installed)
+  else
+  end
+  return setup_treesitter_highlights()
 end
 local function _6_(buf)
   return (vim.bo[buf].filetype ~= "markdown")
 end
-return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", config = _1_, opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "html", "lua", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}}), uu.tx("nvim-treesitter/nvim-treesitter-context", {config = _5_, opts = {exclude_ftypes = {"markdown"}, on_attach = _6_}})}
+return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "html", "lua", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}, config = _4_}), uu.tx("nvim-treesitter/nvim-treesitter-context", {opts = {exclude_ftypes = {"markdown"}, on_attach = _6_}})}
