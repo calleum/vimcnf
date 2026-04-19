@@ -8,7 +8,8 @@
                         :nvim-neotest/neotest-plenary
                         :nvim-neotest/neotest-python
                         :nvim-treesitter/nvim-treesitter]
-         :keys [(uu.tx :<leader>ra run-all-tests {:desc "[R]un [A]ll neotests in current file"})]
+         :keys [(uu.tx :<leader>ra run-all-tests
+                       {:desc "[R]un [A]ll neotests in current file"})]
          :config (fn []
-                   ((. (require :neotest) :setup) 
-                    {:adapters [(require :neotest-python) (require :neotest-plenary)]}))})]
+                   ((. (require :neotest) :setup) {:adapters [(require :neotest-python)
+                                                              (require :neotest-plenary)]}))})]

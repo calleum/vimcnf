@@ -12,9 +12,7 @@
                                      :step_out "⏮"
                                      :step_over "⏭"
                                      :terminate "⏹"}}
-                  :icons {:collapsed "▸"
-                          :current_frame "*"
-                          :expanded "▾"}})
+                  :icons {:collapsed "▸" :current_frame "*" :expanded "▾"}})
     (set dap.listeners.after.event_initialized.dapui_config #(dapui.open))
     (set dap.listeners.before.event_terminated.dapui_config #(dapui.close))
     (set dap.listeners.before.event_exited.dapui_config #(dapui.close))))
@@ -27,10 +25,12 @@
               [:<leader>so dap.step_over "Debug: Step Over"]
               [:<leader>su dap.step_out "Debug: Step Out"]
               [:<leader>db dap.toggle_breakpoint "Debug: Toggle Breakpoint"]
-              [:<leader>tB #(dap.set_breakpoint (vim.fn.input "Breakpoint condition: ")) "Debug: Set Breakpoint"]
+              [:<leader>tB
+               #(dap.set_breakpoint (vim.fn.input "Breakpoint condition: "))
+               "Debug: Set Breakpoint"]
               [:<leader>tt dapui.toggle "Debug: See last session result."]]]
     (each [_ [lhs rhs desc] (ipairs maps)]
-      (vim.keymap.set :n lhs rhs {:desc desc}))))
+      (vim.keymap.set :n lhs rhs {: desc}))))
 
 [(uu.tx :mfussenegger/nvim-dap
         {:lazy true

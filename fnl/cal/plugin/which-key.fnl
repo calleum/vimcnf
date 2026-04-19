@@ -12,6 +12,4 @@
              (uu.tx :<leader>t {:group "[T]oggle"})
              (uu.tx :<leader>w {:group "[W]orkspace"})])))
 
-[(uu.tx :folke/which-key.nvim
-        {:event :VimEnter
-         :config setup-which-key})]
+[(uu.tx :folke/which-key.nvim {:event :VimEnter :config setup-which-key})]

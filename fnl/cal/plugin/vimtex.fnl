@@ -6,13 +6,15 @@
   (set vim.g.vimtex_enabled 1)
   (set vim.g.vimtex_syntax_enabled 0)
   (set vim.g.vimtex_compiler_method :latexmk)
-  (set vim.g.vimtex_compiler_latexmk {:options [:-pdf :-interaction=nonstopmode :--shell-escape :-synctex=1]
-                                      :out_dir :build})
+  (set vim.g.vimtex_compiler_latexmk
+       {:options [:-pdf :-interaction=nonstopmode :--shell-escape :-synctex=1]
+        :out_dir :build})
   (set vim.g.vimtex_quickfix_enabled 0)
-  (set vim.g.vimtex_delim_toggle_mod_list [["\\bigl" "\\bigr"]
-                                           ["\\Bigl" "\\Bigr"]
-                                           ["\\biggl" "\\biggr"]
-                                           ["\\Biggl" "\\Biggr"]])
+  (set vim.g.vimtex_delim_toggle_mod_list
+       [["\\bigl" "\\bigr"]
+        ["\\Bigl" "\\Bigr"]
+        ["\\biggl" "\\biggr"]
+        ["\\Biggl" "\\Biggr"]])
   (when (= (vim.fn.has :mac) 1)
     (set vim.g.vimtex_view_method :skim)
     (set vim.g.vimtex_view_skim_sync 1)
@@ -20,7 +22,7 @@
 
 (fn vimtex-compile [] (vim.cmd :VimtexCompile))
 
-[(uu.tx :lervag/vimtex
-        {:ft :tex
-         :keys [(uu.tx :<leader>ll vimtex-compile {:desc "Vimtex Compile"})]
-         :config setup-vimtex})]
+[(uu.tx :lervag/vimtex {:ft :tex
+                        :keys [(uu.tx :<leader>ll vimtex-compile
+                                      {:desc "Vimtex Compile"})]
+                        :config setup-vimtex})]

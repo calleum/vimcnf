@@ -38,4 +38,4 @@ end
 -- 	"Olical/aniseed",
 -- 	{ import = "cal.plugin" },
 -- })
-require("cal")
+require("cal").init()

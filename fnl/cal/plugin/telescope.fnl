@@ -18,13 +18,17 @@
               [:<leader>sg builtin.live_grep "Search by Grep"]
               [:<leader>sd builtin.diagnostics "Search Diagnostics"]
               [:<leader>sr builtin.resume "Search References"]
-              [:<leader>s. builtin.oldfiles "Search Recent Files (\".\" for repeat)"]
+              [:<leader>s.
+               builtin.oldfiles
+               "Search Recent Files (\".\" for repeat)"]
               [:<leader><leader> builtin.buffers "[ ] Find existing buffers"]
               [:<leader>/
-               #(builtin.current_buffer_fuzzy_find (themes.get_dropdown {:previewer false :winblend 10}))
+               #(builtin.current_buffer_fuzzy_find (themes.get_dropdown {:previewer false
+                                                                         :winblend 10}))
                "[/] Fuzzily search in current buffer"]
               [:<leader>s/
-               #(builtin.live_grep {:grep_open_files true :prompt_title "Live Grep in Open Files"})
+               #(builtin.live_grep {:grep_open_files true
+                                    :prompt_title "Live Grep in Open Files"})
                "Search [/] in Open Files"]
               [:<leader>ss
                #(builtin.find_files {:cwd (vim.fn.expand "~/.config/fish")})
@@ -33,7 +37,7 @@
                #(builtin.find_files {:cwd (vim.fn.stdpath :config)})
                "Search Neovim files"]]]
     (each [_ [lhs rhs desc] (ipairs maps)]
-      (vim.keymap.set :n lhs rhs {:desc desc}))))
+      (vim.keymap.set :n lhs rhs {: desc}))))
 
 [(uu.tx :nvim-telescope/telescope.nvim
         {:branch :master

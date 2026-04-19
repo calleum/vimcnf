@@ -1,6 +1,5 @@
 -- [nfnl] fnl/cal/plugin/lspconfig.fnl
 local uu = require("cal.util")
-vim.lsp.set_log_level("info")
 local function set_lsp_keymaps(bufnr)
   local builtin = require("telescope.builtin")
   local maps
@@ -97,6 +96,7 @@ local function setup_mason(mason_servers)
   return require("mason-tool-installer").setup({ensure_installed = ensure_installed})
 end
 local function _11_()
+  vim.lsp.log.set_level("info")
   setup_lsp_attach_autocmd()
   local capabilities = require("blink.cmp").get_lsp_capabilities()
   local _let_12_ = get_server_config()

@@ -1,10 +1,9 @@
 -- [nfnl] fnl/cal/init.fnl
-local vim = _G.vim
 local uu = require("cal.util")
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-vim.g.have_nerd_font = false
 local function setup_options()
+  vim.g.mapleader = " "
+  vim.g.maplocalleader = " "
+  vim.g.have_nerd_font = false
   vim.g.loaded_perl_provider = 0
   vim.g.loaded_ruby_provider = 0
   do
@@ -76,6 +75,7 @@ local function setup_lazy()
   else
   end
   vim.opt.rtp:prepend(lazypath)
+  local lazy = require("lazy")
   local function _9_()
     vim.cmd.colorscheme("tokyonight-night")
     vim.cmd.hi("Comment gui=none")
@@ -83,15 +83,24 @@ local function setup_lazy()
     vim.api.nvim_set_hl(0, "TermCursor", clear)
     return vim.api.nvim_set_hl(0, "TermCursorNC", clear)
   end
-  return require("lazy").setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("folke/tokyonight.nvim", {init = _9_, priority = 1000}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
+  return lazy.setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("folke/tokyonight.nvim", {init = _9_, priority = 1000}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
 end
-setup_options()
-setup_keymaps()
-setup_autocommands()
-setup_lazy()
-local function _10_(_, _0, _1, _2, metadata)
-  metadata.injection.language = "yaml"
-  return nil
+local function setup_treesitter_injects()
+  local function _10_(_, _0, _1, _2, metadata)
+    metadata.injection.language = "yaml"
+    return nil
+  end
+  return vim.treesitter.query.add_directive("inject-go-tmpl!", _10_, {})
 end
-vim.treesitter.query.add_directive("inject-go-tmpl!", _10_, {})
-return vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", nft = "nftables"}})
+local function setup_filetypes()
+  return vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", nft = "nftables"}})
+end
+local function init()
+  setup_options()
+  setup_keymaps()
+  setup_autocommands()
+  setup_lazy()
+  setup_treesitter_injects()
+  return setup_filetypes()
+end
+return {init = init}

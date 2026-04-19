@@ -1,7 +1,5 @@
 (local uu (require :cal.util))
 
-(vim.lsp.set_log_level :info)
-
 (fn set-lsp-keymaps [bufnr]
   "Defines buffer-local keybindings for the attached LSP."
   (let [builtin (require :telescope.builtin)
@@ -119,6 +117,7 @@
 
 [(uu.tx :neovim/nvim-lspconfig
         {:config (fn []
+                   (vim.lsp.log.set_level :info)
                    (setup-lsp-attach-autocmd)
                    (let [capabilities ((. (require :blink.cmp)
                                           :get_lsp_capabilities))
