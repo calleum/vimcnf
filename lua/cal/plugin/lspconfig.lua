@@ -64,7 +64,7 @@ local function get_server_config()
     _ = nil
   end
   local mason = {fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
-  local system = {["rust-analyzer"] = {}, fennel_language_server = {root_dir = require("lspconfig").util.root_pattern(".nfnl.fnl", "fnl", ".git"), settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
+  local system = {["rust-analyzer"] = {}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
   return {mason = mason, system = system, all = vim.tbl_deep_extend("force", mason, system)}
 end
 local function setup_vtsls()
@@ -77,32 +77,39 @@ local function setup_vtsls()
   return vim.tbl_keys(configs)
 end
 local function setup_mason(mason_servers)
+  local lsp__3emason = {fish_lsp = "fish-lsp", lua_ls = "lua-language-server", vue_ls = "vue-language-server", vtsls = "vtsls"}
+  local ensure_installed
+  do
+    local tbl_26_ = {}
+    local i_27_ = 0
+    for name, _ in pairs(mason_servers) do
+      local val_28_ = (lsp__3emason[name] or name)
+      if (nil ~= val_28_) then
+        i_27_ = (i_27_ + 1)
+        tbl_26_[i_27_] = val_28_
+      else
+      end
+    end
+    ensure_installed = tbl_26_
+  end
   require("mason").setup()
-  local ensure_installed = vim.tbl_keys(mason_servers)
   table.insert(ensure_installed, "stylua")
   return require("mason-tool-installer").setup({ensure_installed = ensure_installed})
 end
-local function _10_()
+local function _11_()
   setup_lsp_attach_autocmd()
   local capabilities = require("blink.cmp").get_lsp_capabilities()
-  local _let_11_ = get_server_config()
-  local mason = _let_11_.mason
-  local system = _let_11_.system
-  local all_servers = _let_11_.all
+  local _let_12_ = get_server_config()
+  local mason = _let_12_.mason
+  local all_servers = _let_12_.all
   local extra_names = setup_vtsls()
   setup_mason(mason)
-  local function setup_server(name)
-    local opts = (all_servers[name] or {})
-    opts.capabilities = vim.tbl_deep_extend("force", (opts.capabilities or {}), capabilities)
-    vim.notify(("LSP Setup: " .. name))
-    return require("lspconfig")[name].setup(opts)
-  end
-  require("mason-lspconfig").setup({handlers = {setup_server}})
-  for name, _ in pairs(system) do
-    setup_server(name)
+  vim.lsp.config("*", {capabilities = capabilities})
+  for name, opts in pairs(all_servers) do
+    vim.lsp.config(name, opts)
   end
   local to_enable = vim.tbl_keys(all_servers)
   vim.list_extend(to_enable, extra_names)
   return vim.lsp.enable(to_enable)
 end
-return {uu.tx("neovim/nvim-lspconfig", {config = _10_, dependencies = {uu.tx("williamboman/mason.nvim", {config = true}), "williamboman/mason-lspconfig.nvim", "WhoIsSethDaniel/mason-tool-installer.nvim", uu.tx("folke/lazydev.nvim", {opts = {}}), "saghen/blink.cmp"}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _11_, dependencies = {uu.tx("williamboman/mason.nvim", {config = true}), "WhoIsSethDaniel/mason-tool-installer.nvim", uu.tx("folke/lazydev.nvim", {opts = {}}), "saghen/blink.cmp"}})}

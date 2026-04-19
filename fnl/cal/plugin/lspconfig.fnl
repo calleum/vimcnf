@@ -81,10 +81,7 @@
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
         system {:rust-analyzer {}
-                :fennel_language_server {:root_dir ((. (require :lspconfig)
-                                                       :util :root_pattern) :.nfnl.fnl
-                                                                            :fnl
-                                                                            :.git)
+                :fennel_language_server {:root_markers [:.nfnl.fnl :fnl :.git]
                                          :settings {:fennel {:diagnostics {:globals [:vim]
                                                                            :extra_globals [:vim]}
                                                              :workspace {: library}}}}}]
@@ -108,8 +105,15 @@
     (vim.tbl_keys configs)))
 
 (fn setup-mason [mason-servers]
-  ((. (require :mason) :setup))
-  (let [ensure-installed (vim.tbl_keys mason-servers)]
+  "Configures Mason and ensures specified tools are installed.
+  Maps LSP names to Mason package names where they differ."
+  (let [lsp->mason {:fish_lsp :fish-lsp
+                    :lua_ls :lua-language-server
+                    :vue_ls :vue-language-server
+                    :vtsls :vtsls}
+        ensure-installed (icollect [name _ (pairs mason-servers)]
+                           (or (. lsp->mason name) name))]
+    ((. (require :mason) :setup))
     (table.insert ensure-installed :stylua)
     ((. (require :mason-tool-installer) :setup) {:ensure_installed ensure-installed})))
 
@@ -118,29 +122,19 @@
                    (setup-lsp-attach-autocmd)
                    (let [capabilities ((. (require :blink.cmp)
                                           :get_lsp_capabilities))
-                         {: mason : system :all all-servers} (get-server-config)
+                         {: mason :all all-servers} (get-server-config)
                          extra-names (setup-vtsls)]
                      (setup-mason mason)
-
-                     (fn setup-server [name]
-                       (let [opts (or (. all-servers name) {})]
-                         (set opts.capabilities
-                              (vim.tbl_deep_extend :force
-                                                   (or opts.capabilities {})
-                                                   capabilities))
-                         (vim.notify (.. "LSP Setup: " name))
-                         ((. (. (require :lspconfig) name) :setup) opts)))
-
-                     ;; Setup handlers for Mason-managed servers
-                     ((. (require :mason-lspconfig) :setup) {:handlers [setup-server]})
-                     ;; Setup system-managed servers
-                     (each [name _ (pairs system)]
-                       (setup-server name))
+                     ;; Set global capabilities for all servers
+                     (vim.lsp.config "*" {: capabilities})
+                     ;; Register server configurations
+                     (each [name opts (pairs all-servers)]
+                       (vim.lsp.config name opts))
+                     ;; Enable all servers
                      (let [to-enable (vim.tbl_keys all-servers)]
                        (vim.list_extend to-enable extra-names)
                        (vim.lsp.enable to-enable))))
          :dependencies [(uu.tx :williamboman/mason.nvim {:config true})
-                        :williamboman/mason-lspconfig.nvim
                         :WhoIsSethDaniel/mason-tool-installer.nvim
                         (uu.tx :folke/lazydev.nvim {:opts {}})
                         :saghen/blink.cmp]})]
