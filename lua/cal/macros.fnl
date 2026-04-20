@@ -1,4 +1,4 @@
-;; [nfnl-macro] 
+;; [nfnl-macro]
 ;; Trick vim-sleuth into using the right indentation for this file.
 (do
   true)

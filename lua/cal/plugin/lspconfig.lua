@@ -63,7 +63,7 @@ local function get_server_config()
     _ = nil
   end
   local mason = {fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
-  local system = {["rust-analyzer"] = {}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
+  local system = {rust_analyzer = {}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
   return {mason = mason, system = system, all = vim.tbl_deep_extend("force", mason, system)}
 end
 local function setup_vtsls()

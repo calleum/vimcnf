@@ -24,6 +24,9 @@
                                    :diff
                                    :html
                                    :lua
+                                   :rust
+                                   :fennel
+                                   :python
                                    :luadoc
                                    :javascript
                                    :typescript

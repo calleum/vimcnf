@@ -7,6 +7,7 @@
                          :<C-space> [:show :show_documentation :hide]
                          :<C-e> [:hide]
                          :<C-y> [:select_and_accept]
+                         :<CR> [:select_and_accept]
                          :<C-p> [:select_prev :fallback]
                          :<C-n> [:select_next :fallback]
                          :<C-b> [:scroll_documentation_up :fallback]
