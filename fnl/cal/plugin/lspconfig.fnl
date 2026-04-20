@@ -78,12 +78,12 @@
         mason {:fish_lsp {}
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
-        system {:rust-analyzer {}
+        system {:rust_analyzer {}
                 :fennel_language_server {:root_markers [:.nfnl.fnl :fnl :.git]
                                          :settings {:fennel {:diagnostics {:globals [:vim]
                                                                            :extra_globals [:vim]}
                                                              :workspace {: library}}}}}]
-    {: mason : system :all (vim.tbl_deep_extend :force mason system)}))
+    {: mason : system :all (uu.extend-or-override mason system)}))
 
 (fn setup-vtsls []
   (let [mason-path (vim.fn.expand :$MASON/packages)
