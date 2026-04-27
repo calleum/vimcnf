@@ -17,14 +17,17 @@ end
 local function _4_(_, opts)
   require("nvim-treesitter.install")["prefer_git"] = true
   local ts = require("nvim-treesitter")
-  ts.setup(opts)
-  if opts.ensure_installed then
+  if ts.setup then
+    ts.setup(opts)
+  else
+  end
+  if (opts.ensure_installed and ts.install) then
     ts.install(opts.ensure_installed)
   else
   end
   return setup_treesitter_highlights()
 end
-local function _6_(buf)
+local function _7_(buf)
   return (vim.bo[buf].filetype ~= "markdown")
 end
-return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "html", "lua", "rust", "fennel", "python", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}, config = _4_}), uu.tx("nvim-treesitter/nvim-treesitter-context", {opts = {exclude_ftypes = {"markdown"}, on_attach = _6_}})}
+return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "html", "lua", "rust", "fennel", "python", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}, config = _4_}), uu.tx("nvim-treesitter/nvim-treesitter-context", {opts = {exclude_ftypes = {"markdown"}, on_attach = _7_}})}

@@ -35,8 +35,8 @@
          :config (fn [_ opts]
                    (tset (require :nvim-treesitter.install) :prefer_git true)
                    (let [ts (require :nvim-treesitter)]
-                     (ts.setup opts)
-                     (when opts.ensure_installed
+                     (when ts.setup (ts.setup opts))
+                     (when (and opts.ensure_installed ts.install)
                        (ts.install opts.ensure_installed))
                      (setup-treesitter-highlights)))})
  (uu.tx :nvim-treesitter/nvim-treesitter-context
