@@ -22,6 +22,10 @@
                 :ensure_installed [:bash
                                    :c
                                    :diff
+                                   :git_config
+                                   :git_rebase
+                                   :gitcommit
+                                   :fish
                                    :html
                                    :lua
                                    :rust

@@ -30,4 +30,4 @@ end
 local function _7_(buf)
   return (vim.bo[buf].filetype ~= "markdown")
 end
-return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "html", "lua", "rust", "fennel", "python", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}, config = _4_}), uu.tx("nvim-treesitter/nvim-treesitter-context", {opts = {exclude_ftypes = {"markdown"}, on_attach = _7_}})}
+return {uu.tx("nvim-treesitter/nvim-treesitter", {branch = "main", build = ":TSUpdate", opts = {auto_install = true, ensure_installed = {"bash", "c", "diff", "git_config", "git_rebase", "gitcommit", "fish", "html", "lua", "rust", "fennel", "python", "luadoc", "javascript", "typescript", "vim", "vimdoc"}}, config = _4_}), uu.tx("nvim-treesitter/nvim-treesitter-context", {opts = {exclude_ftypes = {"markdown"}, on_attach = _7_}})}
