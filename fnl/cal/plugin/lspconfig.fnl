@@ -4,6 +4,7 @@
   "Defines buffer-local keybindings for the attached LSP."
   (let [builtin (require :telescope.builtin)
         maps [[:gd builtin.lsp_definitions "Goto Definition"]
+              [:gz builtin.lsp_references "Goto Refs"]
               [:gr
                #(builtin.lsp_references {:path_display [:truncate]
                                          :fname_width 60})
@@ -78,7 +79,7 @@
         mason {:fish_lsp {}
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
-        system {:rust_analyzer {}
+        system {:rust_analyzer {:settings {:rust-analyzer {:check {:command :clippy}}}}
                 :fennel_language_server {:root_markers [:.nfnl.fnl :fnl :.git]
                                          :settings {:fennel {:diagnostics {:globals [:vim]
                                                                            :extra_globals [:vim]}

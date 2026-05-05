@@ -9,7 +9,7 @@ local function set_lsp_keymaps(bufnr)
   local function _2_()
     return vim.lsp.buf.code_action({apply = true, context = {only = {"source.organizeImports"}}})
   end
-  maps = {{"gd", builtin.lsp_definitions, "Goto Definition"}, {"gr", _1_, "Goto References"}, {"gI", builtin.lsp_implementations, "Goto Implementation"}, {"<leader>D", builtin.lsp_type_definitions, "Type Definition"}, {"<leader>ds", builtin.lsp_document_symbols, "Document Symbols"}, {"<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols"}, {"<leader>rn", vim.lsp.buf.rename, "Rename"}, {"<leader>ca", vim.lsp.buf.code_action, "Code Action"}, {"K", vim.lsp.buf.hover, "Hover Documentation"}, {"gD", vim.lsp.buf.declaration, "Goto Declaration"}, {"<leader>oi", _2_, "Organize Imports"}}
+  maps = {{"gd", builtin.lsp_definitions, "Goto Definition"}, {"gz", builtin.lsp_references, "Goto Refs"}, {"gr", _1_, "Goto References"}, {"gI", builtin.lsp_implementations, "Goto Implementation"}, {"<leader>D", builtin.lsp_type_definitions, "Type Definition"}, {"<leader>ds", builtin.lsp_document_symbols, "Document Symbols"}, {"<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols"}, {"<leader>rn", vim.lsp.buf.rename, "Rename"}, {"<leader>ca", vim.lsp.buf.code_action, "Code Action"}, {"K", vim.lsp.buf.hover, "Hover Documentation"}, {"gD", vim.lsp.buf.declaration, "Goto Declaration"}, {"<leader>oi", _2_, "Organize Imports"}}
   for _, _3_ in ipairs(maps) do
     local lhs = _3_[1]
     local rhs = _3_[2]
@@ -63,7 +63,7 @@ local function get_server_config()
     _ = nil
   end
   local mason = {fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
-  local system = {rust_analyzer = {}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
+  local system = {rust_analyzer = {settings = {["rust-analyzer"] = {check = {command = "clippy"}}}}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
   return {mason = mason, system = system, all = uu["extend-or-override"](mason, system)}
 end
 local function setup_vtsls()
