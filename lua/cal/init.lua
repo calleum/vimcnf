@@ -90,10 +90,11 @@ local function setup_treesitter_injects()
     metadata.injection.language = "yaml"
     return nil
   end
-  return vim.treesitter.query.add_directive("inject-go-tmpl!", _10_, {})
+  vim.treesitter.query.add_directive("inject-go-tmpl!", _10_, {})
+  return vim.treesitter.language.register("yaml", "buf-config")
 end
 local function setup_filetypes()
-  return vim.filetype.add({pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", nft = "nftables"}})
+  return vim.filetype.add({filename = {["buf.yaml"] = "buf-config", ["buf.gen.yaml"] = "buf-config", ["buf.policy.yaml"] = "buf-config", ["buf.lock"] = "buf-config"}, pattern = {[".*helm/.*/.*/templates/.*%.tpl"] = "helm", [".*helm/.*/.*/templates/.*%.ya?ml"] = "helm", [".*chart/.*/templates/.*%.ya?ml"] = "helm", ["helmfile.*%.ya?ml"] = "helm"}, extension = {yml = "yaml", nft = "nftables"}})
 end
 local function init()
   setup_options()

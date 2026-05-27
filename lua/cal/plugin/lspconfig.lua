@@ -62,7 +62,7 @@ local function get_server_config()
   else
     _ = nil
   end
-  local mason = {fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
+  local mason = {buf_ls = {}, fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
   local system = {rust_analyzer = {settings = {["rust-analyzer"] = {check = {command = "clippy"}}}}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
   return {mason = mason, system = system, all = uu["extend-or-override"](mason, system)}
 end
@@ -76,7 +76,7 @@ local function setup_vtsls()
   return vim.tbl_keys(configs)
 end
 local function setup_mason(mason_servers)
-  local lsp__3emason = {fish_lsp = "fish-lsp", lua_ls = "lua-language-server", vue_ls = "vue-language-server", vtsls = "vtsls"}
+  local lsp__3emason = {buf_ls = "buf", fish_lsp = "fish-lsp", lua_ls = "lua-language-server", vue_ls = "vue-language-server", vtsls = "vtsls"}
   local ensure_installed
   do
     local tbl_26_ = {}
@@ -96,7 +96,6 @@ local function setup_mason(mason_servers)
   return require("mason-tool-installer").setup({ensure_installed = ensure_installed})
 end
 local function _11_()
-  vim.lsp.log.set_level("info")
   setup_lsp_attach_autocmd()
   local capabilities = require("blink.cmp").get_lsp_capabilities()
   local _let_12_ = get_server_config()

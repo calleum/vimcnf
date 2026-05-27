@@ -1,12 +1,23 @@
 {
   "unixtime": {
     "prefix": "unixtime",
-    "body": ["${CURRENT_SECONDS_UNIX}"],
+    "body": [
+      "${CURRENT_SECONDS_UNIX}"
+    ],
     "description": "I give you unix epoch time"
+  },
+  "fix": {
+    "prefix": "fix",
+    "body": [
+      "// FIX: "
+    ],
+    "description": "Insert a fix comment for code review flow"
   },
   "lambda": {
     "prefix": "lam",
-    "body": ["λ"],
+    "body": [
+      "λ"
+    ],
     "description": "I give you the lambda symbol"
   }
 }

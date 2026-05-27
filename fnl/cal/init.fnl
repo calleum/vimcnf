@@ -129,10 +129,15 @@
   (vim.treesitter.query.add_directive :inject-go-tmpl!
                                       (fn [_ _ _ _ metadata]
                                         (set metadata.injection.language :yaml))
-                                      {}))
+                                      {})
+  (vim.treesitter.language.register :yaml :buf-config))
 
 (fn setup-filetypes []
-  (vim.filetype.add {:pattern {".*helm/.*/.*/templates/.*%.tpl" :helm
+  (vim.filetype.add {:filename {:buf.yaml :buf-config
+                                :buf.gen.yaml :buf-config
+                                :buf.policy.yaml :buf-config
+                                :buf.lock :buf-config}
+                     :pattern {".*helm/.*/.*/templates/.*%.tpl" :helm
                                ".*helm/.*/.*/templates/.*%.ya?ml" :helm
                                ".*chart/.*/templates/.*%.ya?ml" :helm
                                "helmfile.*%.ya?ml" :helm}

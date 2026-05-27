@@ -76,7 +76,8 @@
         lazydev-path (.. (vim.fn.stdpath :data) :/lazy/lazydev.nvim/lua)
         _ (when (= (vim.fn.isdirectory lazydev-path) 1)
             (table.insert library lazydev-path))
-        mason {:fish_lsp {}
+        mason {:buf_ls {}
+               :fish_lsp {}
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
         system {:rust_analyzer {:settings {:rust-analyzer {:check {:command :clippy}}}}
@@ -106,7 +107,8 @@
 (fn setup-mason [mason-servers]
   "Configures Mason and ensures specified tools are installed.
   Maps LSP names to Mason package names where they differ."
-  (let [lsp->mason {:fish_lsp :fish-lsp
+  (let [lsp->mason {:buf_ls :buf
+                    :fish_lsp :fish-lsp
                     :lua_ls :lua-language-server
                     :vue_ls :vue-language-server
                     :vtsls :vtsls}
@@ -118,7 +120,6 @@
 
 [(uu.tx :neovim/nvim-lspconfig
         {:config (fn []
-                   (vim.lsp.log.set_level :info)
                    (setup-lsp-attach-autocmd)
                    (let [capabilities ((. (require :blink.cmp)
                                           :get_lsp_capabilities))
