@@ -8,7 +8,8 @@
          :keys [(uu.tx :<leader>f format-buffer {:desc "[F]ormat buffer"})]
          :opts {:format_on_save {:lsp_format :fallback :timeout_ms 500}
                 :formatters_by_ft {:lua [:stylua]
-                                   :rust [:rustfmt]
+                                    :rust [:injected :rustfmt]
+                                    :sql [:sqlfmt]
                                    :vue [:eslint_d]
                                    :make [:bake]
                                    :bash [:shfmt]

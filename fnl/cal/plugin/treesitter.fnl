@@ -27,9 +27,10 @@
                                    :gitcommit
                                    :fish
                                    :html
-                                   :lua
-                                   :rust
-                                   :fennel
+                                    :lua
+                                    :rust
+                                    :sql
+                                    :fennel
                                    :python
                                    :luadoc
                                    :javascript
