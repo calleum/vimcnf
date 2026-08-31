@@ -69,8 +69,8 @@
                                                                     {:clear true})})
   (let [ft-configs [[:gitcommit 72 73]
                     [:tex 80 81]
-                    [:text 90 90]
-                    [:markdown 90 90]]]
+                    [:text 80 80]
+                    [:markdown 80 80]]]
     (each [_ [ft tw cc] (ipairs ft-configs)]
       (vim.api.nvim_create_autocmd :FileType
                                    {:pattern ft

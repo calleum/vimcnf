@@ -40,7 +40,7 @@ local function setup_autocommands()
   end
   vim.api.nvim_create_autocmd("TextYankPost", {callback = _3_, desc = "Highlight when yanking text", group = vim.api.nvim_create_augroup("highlight-yank", {clear = true})})
   do
-    local ft_configs = {{"gitcommit", 72, 73}, {"tex", 80, 81}, {"text", 90, 90}, {"markdown", 90, 90}}
+    local ft_configs = {{"gitcommit", 72, 73}, {"tex", 80, 81}, {"text", 80, 80}, {"markdown", 80, 80}}
     for _, _4_ in ipairs(ft_configs) do
       local ft = _4_[1]
       local tw = _4_[2]

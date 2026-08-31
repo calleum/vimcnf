@@ -81,6 +81,8 @@
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}
         system {:rust_analyzer {:settings {:rust-analyzer {:check {:command :clippy}}}}
+                ;; markdown-oxide watches the vault for file renames itself
+                :markdown_oxide {:capabilities {:workspace {:didChangeWatchedFiles {:dynamicRegistration true}}}}
                 :fennel_language_server {:root_markers [:.nfnl.fnl :fnl :.git]
                                          :settings {:fennel {:diagnostics {:globals [:vim]
                                                                            :extra_globals [:vim]}

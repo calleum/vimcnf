@@ -3,7 +3,7 @@ local uu = require("cal.util")
 local function setup_telescope()
   local telescope = require("telescope")
   local themes = require("telescope.themes")
-  telescope.setup({extensions = {["ui-select"] = {themes.get_dropdown({layout_config = {width = 0.9}})}}})
+  telescope.setup({defaults = {file_ignore_patterns = {"%.git/"}}, pickers = {find_files = {hidden = true}, grep_string = {hidden = true}, live_grep = {hidden = true}}, extensions = {["ui-select"] = {themes.get_dropdown({layout_config = {width = 0.9}})}}})
   for _, ext in ipairs({"fzf", "ui-select", "dap"}) do
     pcall(telescope.load_extension, ext)
   end
