@@ -77,6 +77,7 @@
         _ (when (= (vim.fn.isdirectory lazydev-path) 1)
             (table.insert library lazydev-path))
         mason {:buf_ls {}
+               :clangd {}
                :fish_lsp {}
                :basedpyright {}
                :lua_ls {:settings {:Lua {:completion {:callSnippet :Replace}}}}}

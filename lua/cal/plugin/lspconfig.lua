@@ -62,7 +62,7 @@ local function get_server_config()
   else
     _ = nil
   end
-  local mason = {buf_ls = {}, fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
+  local mason = {buf_ls = {}, clangd = {}, fish_lsp = {}, basedpyright = {}, lua_ls = {settings = {Lua = {completion = {callSnippet = "Replace"}}}}}
   local system = {rust_analyzer = {settings = {["rust-analyzer"] = {check = {command = "clippy"}}}}, markdown_oxide = {capabilities = {workspace = {didChangeWatchedFiles = {dynamicRegistration = true}}}}, fennel_language_server = {root_markers = {".nfnl.fnl", "fnl", ".git"}, settings = {fennel = {diagnostics = {globals = {"vim"}, extra_globals = {"vim"}}, workspace = {library = library}}}}}
   return {mason = mason, system = system, all = uu["extend-or-override"](mason, system)}
 end

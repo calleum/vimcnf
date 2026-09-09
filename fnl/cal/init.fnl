@@ -111,14 +111,12 @@
                    (uu.tx :Olical/nfnl)
                    (uu.tx :isobit/vim-caddyfile)
                    (uu.tx :numToStr/Comment.nvim {:opts {}})
-                   (uu.tx :folke/tokyonight.nvim
-                          {:init (fn []
-                                   (vim.cmd.colorscheme :tokyonight-night)
-                                   (vim.cmd.hi "Comment gui=none")
-                                   (let [clear {:bg :NONE :fg :NONE}]
-                                     (vim.api.nvim_set_hl 0 :TermCursor clear)
-                                     (vim.api.nvim_set_hl 0 :TermCursorNC clear)))
-                           :priority 1000})
+                   (uu.tx :nyoom-engineering/oxocarbon.nvim
+                          {:lazy false
+                           :priority 1000
+                           :build false
+                           :init (fn []
+                                   (vim.cmd.colorscheme :oxocarbon))})
                    {:import :cal.plugin}]
                   {:dev {:path "~/src/calleum"
                          :patterns [:calleum]
