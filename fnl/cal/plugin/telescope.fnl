@@ -3,7 +3,13 @@
 (fn setup-telescope []
   (let [telescope (require :telescope)
         themes (require :telescope.themes)]
-    (telescope.setup {:defaults {:file_ignore_patterns ["%.git/"]}
+    ;; flex stacks the preview above the results once the editor is narrower
+    ;; than flip_columns. flip_lines defaults to 40, which is taller than a
+    ;; split terminal, so it must be lowered or flex never flips.
+    (telescope.setup {:defaults {:file_ignore_patterns ["%.git/"]
+                                 :layout_strategy :flex
+                                 :layout_config {:flex {:flip_columns 187
+                                                        :flip_lines 15}}}
                       :pickers {:find_files {:hidden true}
                                 :grep_string {:hidden true}
                                 :live_grep {:hidden true}}
