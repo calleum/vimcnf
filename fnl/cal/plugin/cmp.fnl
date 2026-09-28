@@ -11,7 +11,8 @@
                          :<C-n> [:select_next :fallback]
                          :<C-b> [:scroll_documentation_up :fallback]
                          :<C-f> [:scroll_documentation_down :fallback]}
-                :completion {:list {:selection {:preselect (fn [{: mode}]
+                :completion {:list {:max_items 5
+                                    :selection {:preselect (fn [{: mode}]
                                                              (not= mode
                                                                    :cmdline))
                                                 :auto_insert (fn [{: mode}]
@@ -20,4 +21,5 @@
                              :menu {:auto_show true}
                              :ghost_text {:enabled true}}
                 :appearance {:nerd_font_variant :mono}
-                :sources {:default [:lsp :path :snippets :buffer]}}})]
+                :sources {:default [:lsp :path :snippets :buffer]
+                          :min_keyword_length 2}}})]
