@@ -18,11 +18,7 @@
               [:<leader>rn vim.lsp.buf.rename :Rename]
               [:<leader>ca vim.lsp.buf.code_action "Code Action"]
               [:K vim.lsp.buf.hover "Hover Documentation"]
-              [:gD vim.lsp.buf.declaration "Goto Declaration"]
-              [:<leader>oi
-               #(vim.lsp.buf.code_action {:apply true
-                                          :context {:only [:source.organizeImports]}})
-               "Organize Imports"]]]
+              [:gD vim.lsp.buf.declaration "Goto Declaration"]]]
     (each [_ [lhs rhs desc] (ipairs maps)]
       (vim.keymap.set :n lhs rhs {:buffer bufnr :desc (.. "LSP: " desc)}))))
 

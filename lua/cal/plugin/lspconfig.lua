@@ -6,14 +6,11 @@ local function set_lsp_keymaps(bufnr)
   local function _1_()
     return builtin.lsp_references({path_display = {"truncate"}, fname_width = 60})
   end
-  local function _2_()
-    return vim.lsp.buf.code_action({apply = true, context = {only = {"source.organizeImports"}}})
-  end
-  maps = {{"gd", builtin.lsp_definitions, "Goto Definition"}, {"gz", builtin.lsp_references, "Goto Refs"}, {"gr", _1_, "Goto References"}, {"gI", builtin.lsp_implementations, "Goto Implementation"}, {"<leader>D", builtin.lsp_type_definitions, "Type Definition"}, {"<leader>ds", builtin.lsp_document_symbols, "Document Symbols"}, {"<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols"}, {"<leader>rn", vim.lsp.buf.rename, "Rename"}, {"<leader>ca", vim.lsp.buf.code_action, "Code Action"}, {"K", vim.lsp.buf.hover, "Hover Documentation"}, {"gD", vim.lsp.buf.declaration, "Goto Declaration"}, {"<leader>oi", _2_, "Organize Imports"}}
-  for _, _3_ in ipairs(maps) do
-    local lhs = _3_[1]
-    local rhs = _3_[2]
-    local desc = _3_[3]
+  maps = {{"gd", builtin.lsp_definitions, "Goto Definition"}, {"gz", builtin.lsp_references, "Goto Refs"}, {"gr", _1_, "Goto References"}, {"gI", builtin.lsp_implementations, "Goto Implementation"}, {"<leader>D", builtin.lsp_type_definitions, "Type Definition"}, {"<leader>ds", builtin.lsp_document_symbols, "Document Symbols"}, {"<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace Symbols"}, {"<leader>rn", vim.lsp.buf.rename, "Rename"}, {"<leader>ca", vim.lsp.buf.code_action, "Code Action"}, {"K", vim.lsp.buf.hover, "Hover Documentation"}, {"gD", vim.lsp.buf.declaration, "Goto Declaration"}}
+  for _, _2_ in ipairs(maps) do
+    local lhs = _2_[1]
+    local rhs = _2_[2]
+    local desc = _2_[3]
     vim.keymap.set("n", lhs, rhs, {buffer = bufnr, desc = ("LSP: " .. desc)})
   end
   return nil
@@ -23,28 +20,28 @@ local function setup_lsp_highlights(bufnr, client)
     local group = vim.api.nvim_create_augroup("lsp-highlight", {clear = false})
     vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI"}, {buffer = bufnr, callback = vim.lsp.buf.document_highlight, group = group})
     vim.api.nvim_create_autocmd({"CursorMoved", "CursorMovedI"}, {buffer = bufnr, callback = vim.lsp.buf.clear_references, group = group})
-    local function _4_(event2)
+    local function _3_(event2)
       vim.lsp.buf.clear_references()
       return vim.api.nvim_clear_autocmds({buffer = event2.buf, group = group})
     end
-    return vim.api.nvim_create_autocmd("LspDetach", {callback = _4_, group = vim.api.nvim_create_augroup("lsp-detach", {clear = true})})
+    return vim.api.nvim_create_autocmd("LspDetach", {callback = _3_, group = vim.api.nvim_create_augroup("lsp-detach", {clear = true})})
   else
     return nil
   end
 end
 local function setup_lsp_inlay_hints(bufnr, client)
   if (client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint) then
-    local function _6_()
+    local function _5_()
       return vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
     end
-    return vim.keymap.set("n", "<leader>th", _6_, {buffer = bufnr, desc = "LSP: Toggle Inlay Hints"})
+    return vim.keymap.set("n", "<leader>th", _5_, {buffer = bufnr, desc = "LSP: Toggle Inlay Hints"})
   else
     return nil
   end
 end
-local function on_lsp_attach(_8_)
-  local bufnr = _8_.buf
-  local data = _8_.data
+local function on_lsp_attach(_7_)
+  local bufnr = _7_.buf
+  local data = _7_.data
   local client = vim.lsp.get_client_by_id(data.client_id)
   set_lsp_keymaps(bufnr)
   setup_lsp_highlights(bufnr, client)
@@ -95,12 +92,12 @@ local function setup_mason(mason_servers)
   table.insert(ensure_installed, "stylua")
   return require("mason-tool-installer").setup({ensure_installed = ensure_installed})
 end
-local function _11_()
+local function _10_()
   setup_lsp_attach_autocmd()
   local capabilities = require("blink.cmp").get_lsp_capabilities()
-  local _let_12_ = get_server_config()
-  local mason = _let_12_.mason
-  local all_servers = _let_12_.all
+  local _let_11_ = get_server_config()
+  local mason = _let_11_.mason
+  local all_servers = _let_11_.all
   local extra_names = setup_vtsls()
   setup_mason(mason)
   vim.lsp.config("*", {capabilities = capabilities})
@@ -111,4 +108,4 @@ local function _11_()
   vim.list_extend(to_enable, extra_names)
   return vim.lsp.enable(to_enable)
 end
-return {uu.tx("neovim/nvim-lspconfig", {config = _11_, dependencies = {uu.tx("williamboman/mason.nvim", {config = true}), "WhoIsSethDaniel/mason-tool-installer.nvim", uu.tx("folke/lazydev.nvim", {opts = {}}), "saghen/blink.cmp"}})}
+return {uu.tx("neovim/nvim-lspconfig", {config = _10_, dependencies = {uu.tx("williamboman/mason.nvim", {config = true}), "WhoIsSethDaniel/mason-tool-installer.nvim", uu.tx("folke/lazydev.nvim", {opts = {}}), "saghen/blink.cmp"}})}
