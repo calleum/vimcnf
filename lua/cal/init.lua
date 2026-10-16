@@ -84,7 +84,7 @@ local function setup_lazy()
   local function _10_()
     return vim.cmd.colorscheme("oxocarbon")
   end
-  return lazy.setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("nyoom-engineering/oxocarbon.nvim", {priority = 1000, init = _10_, build = false, lazy = false}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
+  return lazy.setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("nyoom-engineering/oxocarbon.nvim", {priority = 1000, init = _10_, build = false, lazy = false}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
 end
 local function setup_treesitter_injects()
   local function _11_(_, _0, _1, _2, metadata)

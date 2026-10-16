@@ -110,7 +110,6 @@
       (lazy.setup [(uu.tx :folke/todo-comments.nvim
                           {:dependencies [:nvim-lua/plenary.nvim] :opts {}})
                    (uu.tx :tpope/vim-sleuth)
-                   (uu.tx :tpope/vim-fugitive)
                    (uu.tx :tpope/vim-abolish)
                    (uu.tx :Olical/nfnl)
                    (uu.tx :isobit/vim-caddyfile)
