@@ -13,6 +13,12 @@
           "fish"
         ],
         "path": "./fish.json"
+      },
+      {
+        "language": [
+          "fennel"
+        ],
+        "path": "./fennel.json"
       }
     ]
   }

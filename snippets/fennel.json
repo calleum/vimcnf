@@ -1,0 +1,12 @@
+{
+  "Single plugin": {
+    "prefix": "plugin",
+    "body": [
+      "(local uu (require :cal.util))",
+      "",
+      "[(uu.tx :${1:author/plugin.nvim}",
+      "        {:opts {$0}})]"
+    ],
+    "description": "Define one lazy.nvim plugin using cal.util.tx"
+  }
+}
