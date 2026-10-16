@@ -46,6 +46,11 @@ local function setup_autocommands()
       local tw = _4_[2]
       local cc = _4_[3]
       local function _5_()
+        if (ft == "markdown") then
+          vim.opt_local.wrap = true
+          vim.opt_local.linebreak = true
+        else
+        end
         vim.opt_local.spell = true
         vim.opt_local.textwidth = tw
         vim.opt_local.colorcolumn = tostring(cc)
@@ -54,19 +59,19 @@ local function setup_autocommands()
       vim.api.nvim_create_autocmd("FileType", {pattern = ft, callback = _5_})
     end
   end
-  local function _6_()
+  local function _7_()
     vim.bo.filetype = "mail"
     return nil
   end
-  vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {pattern = "/tmp/mutt*", callback = _6_})
-  local function _7_()
+  vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {pattern = "/tmp/mutt*", callback = _7_})
+  local function _8_()
     vim.opt_local.spell = true
     vim.opt_local.textwidth = 72
     vim.opt_local.colorcolumn = "73"
     vim.opt_local.formatoptions = (vim.opt_local.formatoptions._value .. "w")
     return nil
   end
-  return vim.api.nvim_create_autocmd("FileType", {pattern = "mail", callback = _7_})
+  return vim.api.nvim_create_autocmd("FileType", {pattern = "mail", callback = _8_})
 end
 local function setup_lazy()
   local lazypath = (vim.fn.stdpath("data") .. "/lazy/lazy.nvim")
@@ -76,17 +81,17 @@ local function setup_lazy()
   end
   vim.opt.rtp:prepend(lazypath)
   local lazy = require("lazy")
-  local function _9_()
+  local function _10_()
     return vim.cmd.colorscheme("oxocarbon")
   end
-  return lazy.setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("nyoom-engineering/oxocarbon.nvim", {priority = 1000, init = _9_, build = false, lazy = false}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
+  return lazy.setup({uu.tx("folke/todo-comments.nvim", {dependencies = {"nvim-lua/plenary.nvim"}, opts = {}}), uu.tx("tpope/vim-sleuth"), uu.tx("tpope/vim-fugitive"), uu.tx("tpope/vim-abolish"), uu.tx("Olical/nfnl"), uu.tx("isobit/vim-caddyfile"), uu.tx("numToStr/Comment.nvim", {opts = {}}), uu.tx("nyoom-engineering/oxocarbon.nvim", {priority = 1000, init = _10_, build = false, lazy = false}), {import = "cal.plugin"}}, {dev = {path = "~/src/calleum", patterns = {"calleum"}, fallback = true}, rocks = {enabled = false}})
 end
 local function setup_treesitter_injects()
-  local function _10_(_, _0, _1, _2, metadata)
+  local function _11_(_, _0, _1, _2, metadata)
     metadata.injection.language = "yaml"
     return nil
   end
-  vim.treesitter.query.add_directive("inject-go-tmpl!", _10_, {})
+  vim.treesitter.query.add_directive("inject-go-tmpl!", _11_, {})
   return vim.treesitter.language.register("yaml", "buf-config")
 end
 local function setup_filetypes()

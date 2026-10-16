@@ -1,6 +1,13 @@
 (local uu (require :cal.util))
 
-[(uu.tx :folke/snacks.nvim {:keys [(uu.tx :<leader>z (fn [] (Snacks.zen))
+[(uu.tx :folke/snacks.nvim {:keys [(uu.tx :<leader>z
+                                           (fn []
+                                             (Snacks.zen (when (= vim.bo.filetype :markdown)
+                                                           {:win {:width 80
+                                                                  :wo {:number false
+                                                                       :relativenumber false
+                                                                       :signcolumn :no
+                                                                       :statuscolumn ""}}})))
                                           {:desc "Toggle Zen Mode"})
                                    (uu.tx :<leader>Z (fn [] (Snacks.zen.zoom))
                                           {:desc "Toggle Zoom"})
@@ -33,7 +40,8 @@
                                           {:desc "Neovim News"})]
                             :lazy false
                             :opts {:bigfile {:enabled true}
-                                   :dashboard {:enabled true}
+                                    :dashboard {:enabled true}
+                                    :dim {:animate {:enabled false}}
                                    :explorer {:enabled true}
                                    ; :indent {:enabled true}
                                    :input {:enabled true}
@@ -41,6 +49,10 @@
                                    :picker {:enabled true}
                                    :quickfile {:enabled true}
                                    :statuscolumn {:enabled true}
-                                   :styles {:notification {}}
+                                    :styles {:notification {}}
+                                    :zen {:win {:wo {:winhighlight "Normal:Normal,NormalNC:Normal,NormalFloat:Normal"}
+                                                :backdrop {:transparent false
+                                                           :blend 0
+                                                           :win {:wo {:winhighlight "Normal:Normal,NormalNC:Normal"}}}}}
                                    :words {:enabled true}}
                             :priority 1000})]

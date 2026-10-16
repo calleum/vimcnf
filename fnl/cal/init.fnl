@@ -75,6 +75,10 @@
       (vim.api.nvim_create_autocmd :FileType
                                    {:pattern ft
                                     :callback (fn []
+                                                (when (= ft :markdown)
+                                                  (set vim.opt_local.wrap true)
+                                                  (set vim.opt_local.linebreak
+                                                       true))
                                                 (set vim.opt_local.spell true)
                                                 (set vim.opt_local.textwidth tw)
                                                 (set vim.opt_local.colorcolumn
