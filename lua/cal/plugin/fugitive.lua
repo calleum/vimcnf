@@ -38,4 +38,4 @@ end
 local function _4_()
   return review_quickfix(false)
 end
-return {uu.tx("tpope/vim-fugitive", {dependencies = {"lewis6991/gitsigns.nvim"}, keys = {uu.tx("<leader>sq", _3_, {desc = "Quickfix changed files (exclude locks/generated)"}), uu.tx("<leader>sQ", _4_, {desc = "Quickfix changed hunks (exclude locks/generated)"}), uu.tx("<leader>se", leave_review, {desc = "Exit Git review mode"})}, lazy = false})}
+return {uu.tx("tpope/vim-fugitive", {dependencies = {"lewis6991/gitsigns.nvim"}, keys = {uu.tx("<leader>sQ", _3_, {desc = "Quickfix changed files (exclude locks/generated)"}), uu.tx("<leader>sq", _4_, {desc = "Quickfix changed hunks (exclude locks/generated)"}), uu.tx("<leader>se", leave_review, {desc = "Exit Git review mode"})}, lazy = false})}

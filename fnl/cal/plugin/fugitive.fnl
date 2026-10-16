@@ -36,9 +36,9 @@
 [(uu.tx :tpope/vim-fugitive
         {:lazy false
          :dependencies [:lewis6991/gitsigns.nvim]
-         :keys [(uu.tx :<leader>sq #(review-quickfix true)
+         :keys [(uu.tx :<leader>sQ #(review-quickfix true)
                        {:desc "Quickfix changed files (exclude locks/generated)"})
-                (uu.tx :<leader>sQ #(review-quickfix false)
+                (uu.tx :<leader>sq #(review-quickfix false)
                        {:desc "Quickfix changed hunks (exclude locks/generated)"})
                 (uu.tx :<leader>se leave-review
                        {:desc "Exit Git review mode"})]})]
