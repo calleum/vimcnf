@@ -23,14 +23,16 @@
         (vim.notify (.. "Cannot start Git review: " base) vim.log.levels.ERROR)
         (do
           (when files-only (table.insert args :--name-only))
-          (table.insert args (.. base "..HEAD"))
+          ;; A single revision targets working-tree files, not fugitive:// blobs.
+          ;; This also includes local edits so quickfix and Gitsigns agree.
+          (table.insert args base)
           (table.insert args :--)
           (each [_ pathspec (ipairs pathspecs)]
             (table.insert args (vim.fn.shellescape pathspec)))
-          (vim.cmd (table.concat args " "))
           (let [gs (require :gitsigns)]
             (gs.change_base base true)
             (gs.toggle_linehl true))
+          (vim.cmd (table.concat args " "))
           (vim.cmd :copen)))))
 
 [(uu.tx :tpope/vim-fugitive

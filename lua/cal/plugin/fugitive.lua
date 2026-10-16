@@ -18,17 +18,17 @@ local function review_quickfix(files_only)
       table.insert(args, "--name-only")
     else
     end
-    table.insert(args, (base .. "..HEAD"))
+    table.insert(args, base)
     table.insert(args, "--")
     for _, pathspec in ipairs(pathspecs) do
       table.insert(args, vim.fn.shellescape(pathspec))
     end
-    vim.cmd(table.concat(args, " "))
     do
       local gs = require("gitsigns")
       gs.change_base(base, true)
       gs.toggle_linehl(true)
     end
+    vim.cmd(table.concat(args, " "))
     return vim.cmd("copen")
   end
 end
